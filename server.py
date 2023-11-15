@@ -4,7 +4,7 @@ from pymongo import MongoClient
 app = Flask(__name__)
 
 # Connect to the MongoDB server
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb://127.0.0.1:27017/')
 # Create or get a database
 db = client['button_clicks_db']
 
@@ -52,7 +52,7 @@ def get_all_counts():
 
 @app.route('/')
 def index():
-    return render_template('gpayapp.html')
+    return render_template('gpayapptest.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
