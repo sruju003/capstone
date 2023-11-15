@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Button Click Counter</title>
+</head>
+<body>
+
+  <div class="button-container">
+    <button class="click-button" id="myButton">Click me</button>
+    <p>Click Count: <span class="clickCount">0</span></p>
+  </div>
+  <div class="button-container">
+    <button class="click-button" id="myButton2">Click me again</button>
+    <p>Click Count: <span class="clickCount">0</span></p>
+  </div>
+
+  <script>
+    // Create an object to store click counts for each button
+    const clickCounts = {};
+
+    // Get all elements with the class "click-button"
+    const buttons = document.querySelectorAll('.click-button');
+
+    // Initialize the click counts
+    buttons.forEach((button) => {
+      clickCounts[button.id] = 0;
+    });
+
+    // Iterate over each button and add a click event listener
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        // Increment the click count when the button is clicked
+        clickCounts[button.id]++;
+
+        // Send the click count to the server
+        fetch('/update_count', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ button_id: button.id, click_count: clickCounts[button.id] }),
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
