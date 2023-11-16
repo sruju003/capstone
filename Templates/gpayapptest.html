@@ -749,6 +749,7 @@
           },
           body: JSON.stringify({ button_id: button.id, click_count: clickCounts[button.id] }),
         });
+        clickCounts[button.id] = 0; // Re-Initialize the click count to zero
       });
     });
     </script>

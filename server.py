@@ -25,19 +25,32 @@ db = client['button_clicks_db']
 # Create or get a collection
 button_clicks = db['button_clicks']
 
+
+
 @app.route('/update_count', methods=['POST'])
 def update_count():
     data = request.get_json()
     button_id = data.get('button_id')
     click_count = data.get('click_count')
 
+    # Update or insert the count into the MongoDB collection
     if button_id and click_count is not None:
-        # Update or insert the count into the MongoDB collection
-        button_clicks.update_one(
+        button_count = button_clicks.find_one({'buttonId': button_id})
+        if button_count: # If button exists, then update the value of the click_count by iterating over the existing value
+            count = button_count.get('count', 0)
+            count += click_count
+            button_clicks.update_one(
+            {'buttonId': button_id},
+            {'$set': {'count': count}},
+            upsert=True
+        )
+        else: # Create a new button if it doesn't exist
+            button_clicks.update_one(
             {'buttonId': button_id},
             {'$set': {'count': click_count}},
             upsert=True
         )
+        
         return jsonify({'message': 'Click count updated successfully'})
     else:
         return jsonify({'message': 'Invalid data'}), 400
