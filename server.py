@@ -26,12 +26,12 @@ db = client['button_clicks_db']
 button_clicks = db['button_clicks']
 
 
-
 @app.route('/update_count', methods=['POST'])
 def update_count():
     data = request.get_json()
     button_id = data.get('button_id')
     click_count = data.get('click_count')
+    button_size = data.get('size')
 
     # Update or insert the count into the MongoDB collection
     if button_id and click_count is not None:

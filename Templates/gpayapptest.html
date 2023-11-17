@@ -722,6 +722,8 @@
             });
         });
         });*/
+    // MAX SIZE OF BUTTON
+    MAX_BUTTON_SIZE = 100
 
     // Create an object to store click counts for each button
     const clickCounts = {};
@@ -731,7 +733,7 @@
 
      // Initialize the click counts
     buttons.forEach((button) => {
-      clickCounts[button.id] = 0;
+      clickCounts[button.id] = {count : 0, size: 10};
     });
 
 
@@ -739,7 +741,9 @@
     buttons.forEach((button) => {
       button.addEventListener('click', () => {
         // Increment the click count when the button is clicked
-        clickCounts[button.id]++;
+        clickCounts[button.id].count++;
+        clickCounts[button.id].size = calcButtonSize(clickCounts[button.id].count)
+        temp_count = 1
 
         // Send the click count to the server
         fetch('/update_count', {
@@ -747,13 +751,29 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ button_id: button.id, click_count: clickCounts[button.id] }),
+          body: JSON.stringify({ button_id: button.id, click_count: temp_count, size: clickCounts[button.id].size }),
         });
-        clickCounts[button.id] = 0; // Re-Initialize the click count to zero
+        temp_count = 0; // Re-Initialize the click count to zero
+        
+        // Update the button size based on the calculated size
+        button.style.width = `${clickCounts[button.id].size}px`;
+        button.style.height = `${clickCounts[button.id].size}px`;
       });
     });
+
+    // work on size changes, you already passing it, put size change functionality.
+    // Function to calculate button size based on click count
+    function calculateButtonSize(Count) {
+    const size = (Count / 10);  // Adjust this formula as needed
+    if (size > MAX_BUTTON_SIZE) {  // Define maximum button size
+        size = MAX_BUTTON_SIZE;
+    }
+    return parseInt(size);
+    }
     </script>
+
 
 </div>
 </body>
 </html>
+ 
