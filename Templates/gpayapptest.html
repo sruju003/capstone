@@ -122,7 +122,7 @@
             
             <div class="icon">
                 <button class="click-button" id="scanQR" style="border: none; background: none; cursor: pointer;" >              
-                <svg width="41" height="51" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg class="click-svg" width="59" height="52" id="scanQR" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_0_1)">
                     <path d="M23.5 13H25.5V11H23.5V13Z" fill="#89B5F6"/>
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5 4H19.5V10H13.5V4ZM29.5 4V10H23.5V4H29.5ZM13.5 20V14H19.5V20H13.5ZM15.5 6V8H17.5V6H15.5ZM25.5 6V8H27.5V6H25.5ZM15.5 16V18H17.5V16H15.5ZM13.5 11H15.5V13H13.5V11ZM22.5 15H20.5V13H18.5V11H22.5V15ZM20.5 6H22.5V10H20.5V6ZM11.5 2V6H9.5V2C9.5 1.46957 9.71071 0.960859 10.0858 0.585786C10.4609 0.210714 10.9696 0 11.5 0L15.5 0V2H11.5ZM31.5 0C32.0304 0 32.5391 0.210714 32.9142 0.585786C33.2893 0.960859 33.5 1.46957 33.5 2V6H31.5V2H27.5V0H31.5ZM11.5 18V22H15.5V24H11.5C10.9696 24 10.4609 23.7893 10.0858 23.4142C9.71071 23.0391 9.5 22.5304 9.5 22V18H11.5ZM31.5 18H33.5V22C33.5 22.5304 33.2893 23.0391 32.9142 23.4142C32.5391 23.7893 32.0304 24 31.5 24H27.5V22H31.5V18Z" fill="white"/>
@@ -698,30 +698,6 @@
 </div>
 
    <script>
-        /*// Get all elements with the class "click-button"
-        const buttons = document.querySelectorAll('.click-button');
-        
-        // Iterate over each button and add a click event listener
-        buttons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const buttonContainer = button.parentElement;
-            const clickCountElement = buttonContainer.querySelector('.clickCount');
-            let clickCount = parseInt(clickCountElement.textContent, 10);
-
-            // Increment the click count when the button is clicked
-            clickCount++;
-            clickCountElement.textContent = clickCount;
-
-            // Send the click count to the server
-            fetch('/update_count', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ button_id: button.id, click_count: clickCount }),
-            });
-        });
-        });*/
     // MAX SIZE OF BUTTON
     MAX_BUTTON_SIZE = 100
 
@@ -730,6 +706,7 @@
 
     // Get all elements with the class "click-button"
     const buttons = document.querySelectorAll('.click-button');
+    const svgs = document.querySelectorAll('.click-svg');
 
      // Initialize the click counts
     buttons.forEach((button) => {
@@ -742,7 +719,7 @@
       button.addEventListener('click', () => {
         // Increment the click count when the button is clicked
         clickCounts[button.id].count++;
-        clickCounts[button.id].size = calcButtonSize(clickCounts[button.id].count)
+        calcSVGSize(button.id, clickCounts[button.id].count)
         temp_count = 1
 
         // Send the click count to the server
@@ -756,19 +733,26 @@
         temp_count = 0; // Re-Initialize the click count to zero
         
         // Update the button size based on the calculated size
-        button.style.width = `${clickCounts[button.id].size}px`;
-        button.style.height = `${clickCounts[button.id].size}px`;
+        button.style.width = button.style.width + clickCounts[button.id].count * 10;
+        button.style.height = button.style.height + clickCounts[button.id].count * 10;
       });
     });
 
     // work on size changes, you already passing it, put size change functionality.
     // Function to calculate button size based on click count
-    function calculateButtonSize(Count) {
-    const size = (Count / 10);  // Adjust this formula as needed
-    if (size > MAX_BUTTON_SIZE) {  // Define maximum button size
-        size = MAX_BUTTON_SIZE;
-    }
-    return parseInt(size);
+    function calcSVGSize(id, count) {
+
+        // Get the SVG element
+        var svg = document.getElementById(id);
+
+        // Calculate new width and height based on the click count
+        var newWidth = 41 + count * 10;
+        var newHeight = 51 + count * 10;
+
+        // Set the new width and height to the SVG element
+        svg.setAttribute('width', newWidth);
+        svg.setAttribute('height', newHeight);
+    return;
     }
     </script>
 
