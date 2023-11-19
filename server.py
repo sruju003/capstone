@@ -31,7 +31,7 @@ def update_count():
     data = request.get_json()
     button_id = data.get('button_id')
     click_count = data.get('click_count')
-    button_size = data.get('size')
+    #button_size = data.get('size')
 
     # Update or insert the count into the MongoDB collection
     if button_id and click_count is not None:
