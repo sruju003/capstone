@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from pymongo import MongoClient, server_api
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder='static')
 
 # Connect to the MongoDB server
 uri = "mongodb+srv://capstone:capstone1@cluster0.1z4a3y1.mongodb.net/?retryWrites=true&w=majority"
