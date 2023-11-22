@@ -2,8 +2,9 @@ import speech_recognition as sr
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.common.by import By
 
-chrome_path = r'C:\Users\Samyam\Downloads\chromedriver-win64'
+chrome_path = r'C:\Users\Lenovo\Downloads\chromedriver-win64\chromedriver.exe'
 
 def speech_to_text():
     # Initialize the recognizer
@@ -29,8 +30,8 @@ def speech_to_text():
 
 def analyze_and_click(text, driver):
     # Analyze the recognized text and perform actions accordingly
-    if "scan QR" in text.lower():
-        driver.find_element_by_id("scanQR").click()
+    if "scan qr".strip() in text.lower():
+        driver.find_element(By.ID, "scanQR").click()
         print("Clicked Button Scan QR")
     elif "click button 2" in text.lower():
         driver.find_element_by_id("button2").click()
