@@ -4,7 +4,7 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 
-chrome_path = r'C:\Users\Lenovo\Downloads\chromedriver-win64\chromedriver.exe'
+chrome_path = r'C:\Users\Lenovo\Downloads\chromedriver-win64\chromedriver.exe' #change this path based on where chromedriver is present
 
 def speech_to_text():
     # Initialize the recognizer
@@ -33,9 +33,27 @@ def analyze_and_click(text, driver):
     if "scan qr".strip() in text.lower():
         driver.find_element(By.ID, "scanQR").click()
         print("Clicked Button Scan QR")
-    elif "click button 2" in text.lower():
-        driver.find_element_by_id("button2").click()
-        print("Clicked Button 2")
+    elif "pay contacts" in text.lower():
+        driver.find_element(By.ID,"payContacts").click()
+        print("Clicked Button payContacts")
+    elif "pay phone" in text.lower():
+        driver.find_element(By.ID,"payPhone").click()
+        print("Clicked Button payPhone")
+    elif "bank transfer" in text.lower():
+        driver.find_element(By.ID,"bankTransfer").click()
+        print("Clicked Button bankTransfer")
+    elif "pay upi" in text.lower():
+        driver.find_element(By.ID,"payUpi").click()
+        print("Clicked Button payUpi")
+    elif "self transfer" in text.lower():
+        driver.find_element(By.ID,"selfTransfer").click()
+        print("Clicked Button selfTransfer")
+    elif "pay bills" in text.lower():
+        driver.find_element(By.ID,"payBills").click()
+        print("Clicked Button payBills")
+    elif "mobile recharge" in text.lower():
+        driver.find_element(By.ID,"mobileRecharge").click()
+        print("Clicked Button mobileRecharge")
     else:
         print("No action specified for the recognized text:", text)
 

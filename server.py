@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template,send_from_directory
 from pymongo import MongoClient, server_api
 
 app = Flask(__name__,static_folder='static')
@@ -76,28 +76,6 @@ def get_all_counts():
         all_button_counts[button_id] = click_count
 
     return jsonify(all_button_counts)
-
-# # PATCH route for updating user information based on email
-# @app.route('/update_button_count/<button_id>', methods=['PATCH'])
-# def update_button_count(button_id):
-#     try:
-#         data = request.get_json()
-#         click_count = data.get('click_count')
-
-#         # Find the button
-#         button_temp = button_clicks.find_one({'buttonId': button_id})
-
-#         # Update additional fields
-#         button_temp['button_id'] = button_temp.get('button_count', 0) + click_count
-
-#         # Save the updated user document
-#         button_clicks.update_one({'buttonId': button_id}, {'$set': button_temp})
-
-#         return jsonify({'message': 'Experience, Age, and Data added successfully'}), 200
-
-#     except Exception as error:
-#         print(error)
-#         return jsonify({'error': 'An error occurred while updating user information'}), 500
 
 @app.route('/')
 def index():
