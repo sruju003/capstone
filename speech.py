@@ -3,8 +3,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
+import time
+import sys
 
-chrome_path = r'C:\Users\Lenovo\Downloads\chromedriver-win64\chromedriver.exe' #change this path based on where chromedriver is present
+chrome_path = r'C:\Users\Samyam\Downloads\chromedriver-win64\chromedriver.exe' #change this path based on where chromedriver is present
 
 def speech_to_text():
     # Initialize the recognizer
@@ -31,29 +33,33 @@ def speech_to_text():
 def analyze_and_click(text, driver):
     # Analyze the recognized text and perform actions accordingly
     if "scan qr".strip() in text.lower():
-        driver.find_element(By.ID, "scanQR").click()
+        driver.find_element(By.ID, "scanQRB").click()
+        # Replace the line where you click the button with this:
+        driver.execute_script("document.getElementById('scanQRB').click();")
         print("Clicked Button Scan QR")
-    elif "pay contacts" in text.lower():
-        driver.find_element(By.ID,"payContacts").click()
+    elif "pay contact" in text.lower():
+        driver.find_element(By.ID,"payContactB").click()
         print("Clicked Button payContacts")
     elif "pay phone" in text.lower():
-        driver.find_element(By.ID,"payPhone").click()
+        driver.find_element(By.ID,"payPhoneB").click()
         print("Clicked Button payPhone")
     elif "bank transfer" in text.lower():
-        driver.find_element(By.ID,"bankTransfer").click()
+        driver.find_element(By.ID,"bankTransferB").click()
         print("Clicked Button bankTransfer")
     elif "pay upi" in text.lower():
-        driver.find_element(By.ID,"payUpi").click()
+        driver.find_element(By.ID,"payUpiB").click()
         print("Clicked Button payUpi")
     elif "self transfer" in text.lower():
-        driver.find_element(By.ID,"selfTransfer").click()
+        driver.find_element(By.ID,"selfTransferB").click()
         print("Clicked Button selfTransfer")
     elif "pay bills" in text.lower():
-        driver.find_element(By.ID,"payBills").click()
+        driver.find_element(By.ID,"payBillsB").click()
         print("Clicked Button payBills")
     elif "mobile recharge" in text.lower():
-        driver.find_element(By.ID,"mobileRecharge").click()
+        driver.find_element(By.ID,"mobileRechargeB").click()
         print("Clicked Button mobileRecharge")
+    elif "quit" in text.lower():
+        sys.exit(0)
     else:
         print("No action specified for the recognized text:", text)
 

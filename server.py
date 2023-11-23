@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template,send_from_directory
 from pymongo import MongoClient, server_api
 
-app = Flask(__name__,static_folder='static')
+app = Flask(__name__)
 
 # Connect to the MongoDB server
 uri = "mongodb+srv://capstone:capstone1@cluster0.1z4a3y1.mongodb.net/?retryWrites=true&w=majority"
@@ -81,5 +81,9 @@ def get_all_counts():
 def index():
     return render_template('gpayapptest.html')
 
+app.config['STATIC_URL_PATH'] = '/static'
+app.config['STATIC_FOLDER'] = 'static'
+
 if __name__ == '__main__':
     app.run(debug=True)
+    
