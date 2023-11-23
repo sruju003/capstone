@@ -81,5 +81,17 @@ def get_all_counts():
 def index():
     return render_template('gpayapptest.html')
 
+@app.route('/uberhome')
+def uberhome():
+    return render_template('uberhome.html')
+
+@app.route('/uberplace')
+def uberplace():
+    return render_template('uber2.html')
+
+@app.route('/uberdriv')
+def uberdriv():
+    return render_teomplate('uber3.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
