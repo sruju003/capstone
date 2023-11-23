@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <style>
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('fonts/SF-Pro-Display-Regular.otf') format('opentype');
+            /* Add other font variations as needed (e.g., bold, italic, etc.) */
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow-x:hidden;
+        }
+
+        body {
+            background-color: #2b2b2b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            overflow-x: hidden;
+            position: relative; /* Add this to make positioning easier */
+        }
+
+        .phone-screen {
+            width: 100%; /* Responsive width */
+            max-width: 414px; /* Max phone screen width */
+            height: 100vh;
+            background-color: #ffffff;
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds the screen */
+            z-index: 0;
+            position: relative; /* Add this for proper positioning */
+            display: flex;
+            flex-direction: column; /* Place content in the center of the screen */
+            /* Center content horizontally */
+        }
+
+
+        .parent {
+        display: flex;
+        /* Other styles for the parent */
+         /* Make sure the parent is a positioned element */
+        }
+
+        /* Style for the SVG */
+        svg {
+        position: absolute;
+        top: 10px; /* Adjust as needed */
+        left: 20px;
+        }
+
+
+
+        .scrollable-container {
+        max-width: 390px;
+        height: 30px;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        margin-left: 20px;
+        overflow-y: hidden;
+        /* Hide scrollbar for WebKit browsers */
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    .scrollable-container::-webkit-scrollbar {
+        display: none; /* Hide scrollbar for WebKit browsers */
+    }
+
+/* Styling the container */
+.container {
+  width: 80%;
+  margin: 0px auto;
+  margin-top: 20px;
+}
+
+/* Styling the expanding textbox */
+.expanding-textbox {
+  width: 90%; /* Adjust the width as needed */
+  min-height: 5px; /* initial height */
+  border: 1px solid #ccc;
+  padding: 8px;
+  font-size: 13px;
+  resize: none; /* Disable resizing */
+  overflow-y: hidden; /* Hide vertical scrollbar */
+}
+
+</style>
+</head>
+<body>
+    <div class="phone-screen">
+
+        <div class="parent">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 10px; margin-left:0px;">
+              <path d="M6.9375 13.5L13.5 21L10.5103 21L2.63527 12L10.5103 3L13.5 3L6.9375 10.5L21 10.5L21 13.5L6.9375 13.5Z" fill="black"/>
+            </svg>
+            <p style="font-size: 20px; font-family: 'SF Pro Display', Arial, sans-serif; margin-left: 120px;"> Plan your Ride</p>        
+        </div>
+
+        <div class="scrollable-container">
+            <button style="background-color: #E2E2E2; width: 100px; height: 25px; border-radius: 20px; border: none;">Pick up Now</button>
+            <button style="background-color: #E2E2E2; width: 100px; height: 25px; border-radius: 20px; border: none;">One way</button>
+            <button style="background-color: #E2E2E2; width: 100px; height: 25px; border-radius: 20px; border: none;">For other</button>
+            <button style="background-color: #E2E2E2; width: 100px; height: 25px; border-radius: 20px; border: none;">Nearby</button>  
+            <button style="background-color: #E2E2E2; width: 100px; height: 25px; border-radius: 20px; border: none;">Nearby</button>       
+        </div>
+
+
+
+        <div  class="container" style="display:flex; ">
+            
+            <div>
+                <svg width="9" height="76" viewBox="0 0 9 76" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top:110px;">
+                <circle cx="4" cy="8" r="3" fill="#6B6B6B"/>
+                <rect x="3.5" y="14" width="1" height="47" fill="#6B6B6B"/>
+                <rect x="1" y="63" width="6" height="7" fill="black"/>
+                <path d="M0.264205 3V0.818182H1.57244V1.05256H0.528409V1.78977H1.47443V2.02415H0.528409V3H0.264205ZM2.08495 3V0.818182H2.82216C2.99262 0.818182 3.13253 0.847301 3.24191 0.90554C3.35128 0.963068 3.43225 1.04226 3.4848 1.14311C3.53736 1.24396 3.56364 1.35866 3.56364 1.48722C3.56364 1.61577 3.53736 1.72976 3.4848 1.82919C3.43225 1.92862 3.35164 2.00675 3.24297 2.06357C3.13431 2.11967 2.99546 2.14773 2.82642 2.14773H2.22983V1.90909H2.8179C2.93438 1.90909 3.02813 1.89205 3.09915 1.85795C3.17088 1.82386 3.22273 1.77557 3.25469 1.71307C3.28736 1.64986 3.3037 1.57457 3.3037 1.48722C3.3037 1.39986 3.28736 1.32351 3.25469 1.25817C3.22202 1.19283 3.16982 1.1424 3.09809 1.10689C3.02635 1.07067 2.93154 1.05256 2.81364 1.05256H2.34915V3H2.08495ZM3.11194 2.01989L3.64887 3H3.34205L2.81364 2.01989H3.11194ZM5.9048 1.90909C5.9048 2.1392 5.86325 2.33807 5.78016 2.50568C5.69706 2.6733 5.58307 2.80256 5.43818 2.89347C5.2933 2.98438 5.12781 3.02983 4.94173 3.02983C4.75565 3.02983 4.59017 2.98438 4.44528 2.89347C4.3004 2.80256 4.18641 2.6733 4.10331 2.50568C4.02021 2.33807 3.97866 2.1392 3.97866 1.90909C3.97866 1.67898 4.02021 1.48011 4.10331 1.3125C4.18641 1.14489 4.3004 1.01562 4.44528 0.924716C4.59017 0.833807 4.75565 0.788352 4.94173 0.788352C5.12781 0.788352 5.2933 0.833807 5.43818 0.924716C5.58307 1.01562 5.69706 1.14489 5.78016 1.3125C5.86325 1.48011 5.9048 1.67898 5.9048 1.90909ZM5.64912 1.90909C5.64912 1.72017 5.61751 1.56072 5.5543 1.43075C5.4918 1.30078 5.40693 1.20241 5.29969 1.13565C5.19315 1.06889 5.07384 1.03551 4.94173 1.03551C4.80963 1.03551 4.68996 1.06889 4.58271 1.13565C4.47618 1.20241 4.39131 1.30078 4.3281 1.43075C4.2656 1.56072 4.23435 1.72017 4.23435 1.90909C4.23435 2.09801 4.2656 2.25746 4.3281 2.38743C4.39131 2.5174 4.47618 2.61577 4.58271 2.68253C4.68996 2.74929 4.80963 2.78267 4.94173 2.78267C5.07384 2.78267 5.19315 2.74929 5.29969 2.68253C5.40693 2.61577 5.4918 2.5174 5.5543 2.38743C5.61751 2.25746 5.64912 2.09801 5.64912 1.90909ZM6.40905 0.818182H6.72439L7.46587 2.62926H7.49143L8.23291 0.818182H8.54825V3H8.30109V1.34233H8.27979L7.59797 3H7.35933L6.67751 1.34233H6.65621V3H6.40905V0.818182Z" fill="black"/>
+                <path d="M2.14489 73.0526V72.8182H3.78125V73.0526H3.09517V75H2.83097V73.0526H2.14489ZM5.9991 73.9091C5.9991 74.1392 5.95755 74.3381 5.87445 74.5057C5.79136 74.6733 5.67737 74.8026 5.53248 74.8935C5.38759 74.9844 5.22211 75.0298 5.03603 75.0298C4.84995 75.0298 4.68447 74.9844 4.53958 74.8935C4.39469 74.8026 4.2807 74.6733 4.19761 74.5057C4.11451 74.3381 4.07296 74.1392 4.07296 73.9091C4.07296 73.679 4.11451 73.4801 4.19761 73.3125C4.2807 73.1449 4.39469 73.0156 4.53958 72.9247C4.68447 72.8338 4.84995 72.7884 5.03603 72.7884C5.22211 72.7884 5.38759 72.8338 5.53248 72.9247C5.67737 73.0156 5.79136 73.1449 5.87445 73.3125C5.95755 73.4801 5.9991 73.679 5.9991 73.9091ZM5.74342 73.9091C5.74342 73.7202 5.71181 73.5607 5.6486 73.4308C5.5861 73.3008 5.50123 73.2024 5.39398 73.1357C5.28745 73.0689 5.16813 73.0355 5.03603 73.0355C4.90393 73.0355 4.78425 73.0689 4.67701 73.1357C4.57048 73.2024 4.4856 73.3008 4.42239 73.4308C4.35989 73.5607 4.32864 73.7202 4.32864 73.9091C4.32864 74.098 4.35989 74.2575 4.42239 74.3874C4.4856 74.5174 4.57048 74.6158 4.67701 74.6825C4.78425 74.7493 4.90393 74.7827 5.03603 74.7827C5.16813 74.7827 5.28745 74.7493 5.39398 74.6825C5.50123 74.6158 5.5861 74.5174 5.6486 74.3874C5.71181 74.2575 5.74342 74.098 5.74342 73.9091Z" fill="black"/>
+                </svg>
+            </div>
+
+            <div>
+                <textarea class="expanding-textbox" placeholder="Enter Pick up Here..." oninput="autoResize(this)"></textarea>
+                <textarea class="expanding-textbox" placeholder="Enter Destination Here..." oninput="autoResize(this)"></textarea>
+            </div>
+
+            <div>
+                <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top: 128px; margin-left:350px;">
+                    <circle cx="17" cy="17" r="17" fill="#EEEEEE"/>
+                    <path d="M19 10H17V16H10V18H17V25H19V18H25V16H19V10Z" fill="black"/>
+                </svg>
+            </div>
+        </div>
+
+        <div>
+            <p style="font-size: 30px; font-family: 'SF Pro Display', Arial, sans-serif; margin-left: 20px;"> Saved Places</p> 
+            <div style="border:1px; border-style: solid;">  
+                <p style="font-size: 20px; font-family: 'SF Pro Display', Arial, sans-serif; margin-left: 20px;">Saket Mall</p>                          
+                <p style="font-size: 10px; font-family: 'SF Pro Display', Arial, sans-serif; margin-left: 20px;"> Saket disctrict center, district center, sec....</p> 
+            </div> 
+            
+            <div style="border:1px; border-style: solid;">  
+                <p style="font-size: 20px; font-family: 'SF Pro Display', Arial, sans-serif; margin-left: 20px;">Saket Mall</p>                          
+                <p style="font-size: 10px; font-family: 'SF Pro Display', Arial, sans-serif; margin-left: 20px;"> Saket disctrict center, district center, sec....</p> 
+            </div> 
+
+            
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+    <script>
+    function autoResize(textarea) {
+      textarea.style.height = 'auto'; // Reset textarea height
+      textarea.style.height = textarea.scrollHeight + 'px'; // Set new height based on content
+    }
+    </script>
+
+
+
+
+
+</body>
+</html>
