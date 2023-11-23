@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Authentication</title>
+</head>
+<body>
+
+<video id="camera" width="640" height="480" autoplay></video>
+
+<script>
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function (stream) {
+        var video = document.getElementById('camera');
+        video.srcObject = stream;
+
+        // Use setInterval to capture and send frames every second
+        setInterval(function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert canvas to base64 image data
+            var imageData = canvas.toDataURL('image/jpeg');
+
+            // Send the image data to the server
+            fetch('/authenticate_realtime', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ image_data: imageData }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.authenticated_user) {
+                    // Redirect to the main page upon successful authentication
+                    window.location.href = '/index?authenticated_user=' + data.authenticated_user;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }, 1000);
+    })
+    .catch(function (error) {
+        console.error('Error accessing camera:', error);
+    });
+</script>
+
+</body>
+</html>
