@@ -13,6 +13,8 @@ known_face_names = ["Vishnu"]
 
 # Open the camera
 video_capture = cv2.VideoCapture(0)
+print("Webcam initialized")
+
 
 while True:
     # Capture each frame from the video feed
@@ -49,3 +51,4 @@ while True:
 # Release the video feed and close all windows
 video_capture.release()
 cv2.destroyAllWindows()
+print("Script completed")
