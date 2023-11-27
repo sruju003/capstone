@@ -92,27 +92,44 @@ def update_count():
         return jsonify({'message': 'Invalid data'}), 400
 
 
-@app.route('/get_count/<button_id>', methods=['GET'])
-def get_count(button_id):
-    # Retrieve the count from the MongoDB collection
+@app.route('/get_count/<user_name>/<button_id>', methods=['GET'])
+def get_count(user_name, button_id):
+    # Dynamically access the user-specific collection
+    collection_name = f"button_clicks_{user_name}"
+    button_clicks = db[collection_name]
+
+    # Retrieve the count from the user-specific collection
     button_count = button_clicks.find_one({'buttonId': button_id})
     if button_count:
         count = button_count.get('count', 0)
     else:
         count = 0
-    return jsonify({'button_id': button_id, 'click_count': count})
+
+    return jsonify({'user_name': user_name, 'button_id': button_id, 'click_count': count})
+
 
 @app.route('/get_all_counts', methods=['GET'])
 def get_all_counts():
     all_button_counts = {}
 
-    # Retrieve the counts for all buttons from the MongoDB collection
-    for button_record in button_clicks.find({}):
-        button_id = button_record.get('buttonId')
-        click_count = button_record.get('count', 0)
-        all_button_counts[button_id] = click_count
+    # Iterate over each user's collection
+    for user_name in db.list_collection_names():
+
+        # Dynamically access the user-specific collection
+        collection_name = user_name
+        button_clicks = db[collection_name]
+
+        # Retrieve the counts for all buttons from the user-specific collection
+        user_counts = {}
+        for button_record in button_clicks.find({}):
+            button_id = button_record.get('buttonId')
+            click_count = button_record.get('count', 0)
+            user_counts[button_id] = click_count
+
+        all_button_counts[user_name] = user_counts
 
     return jsonify(all_button_counts)
+
 
 def load_face_encodings(file_path):
     with open(file_path, 'rb') as file:
