@@ -25,20 +25,54 @@ except Exception as e:
 db = client['button_clicks_db']
 
 # Create or get a collection
-button_clicks = db['button_clicks']
+#button_clicks = db['button_clicks'] #choose a specific collection based on the user.
 
+
+# @app.route('/update_count', methods=['POST'])
+# def update_count():
+#     data = request.get_json()
+#     button_id = data.get('button_id')
+#     click_count = data.get('click_count')
+#     user_name = data.get('user_name')
+    
+#     # Update or insert the count into the MongoDB collection
+#     if button_id and click_count is not None:
+#         button_count = button_clicks.find_one({'buttonId': button_id})
+#         if button_count: # based on the user received create a db if it doesn't exist else update over the existing one.
+#             # If button exists, then update the value of the click_count by iterating over the existing value
+#             count = button_count.get('count', 0)
+#             count += click_count
+#             button_clicks.update_one(
+#                 {'buttonId': button_id},
+#                 {'$set': {'count': count}},
+#                 upsert=True
+#             )
+#         else:
+#             # Create a new button if it doesn't exist
+#             button_clicks.update_one(
+#                 {'buttonId': button_id},
+#                 {'$set': {'count': click_count}},
+#                 upsert=True
+#             )
+        
+#         return jsonify({'message': 'Click count updated successfully'})
+#     else:
+#         return jsonify({'message': 'Invalid data'}), 400
 
 @app.route('/update_count', methods=['POST'])
 def update_count():
     data = request.get_json()
     button_id = data.get('button_id')
     click_count = data.get('click_count')
-    
-    # Update or insert the count into the MongoDB collection
+    user_name = data.get('user_name')
+
+    # Dynamically create or use the user-specific collection
+    collection_name = f"button_clicks_{user_name}"
+    button_clicks = db[collection_name]
+
     if button_id and click_count is not None:
         button_count = button_clicks.find_one({'buttonId': button_id})
-        if button_count:
-            # If button exists, then update the value of the click_count by iterating over the existing value
+        if button_count:  # Update the click count for the existing button
             count = button_count.get('count', 0)
             count += click_count
             button_clicks.update_one(
@@ -46,17 +80,17 @@ def update_count():
                 {'$set': {'count': count}},
                 upsert=True
             )
-        else:
-            # Create a new button if it doesn't exist
+        else:  # Create a new button if it doesn't exist
             button_clicks.update_one(
                 {'buttonId': button_id},
                 {'$set': {'count': click_count}},
                 upsert=True
             )
-        
+
         return jsonify({'message': 'Click count updated successfully'})
     else:
         return jsonify({'message': 'Invalid data'}), 400
+
 
 @app.route('/get_count/<button_id>', methods=['GET'])
 def get_count(button_id):
@@ -145,7 +179,7 @@ def authenticate_realtime():
 @app.route('/index')
 def index():
     authenticated_user = request.args.get('authenticated_user')
-    return render_template('gpayapptest.html', authenticated_user=authenticated_user)
+    return render_template('gpayappland.html', authenticated_user=authenticated_user)
 
 def save_face_encodings(file_path, image_paths, names):
     known_face_encodings = []

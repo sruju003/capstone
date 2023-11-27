@@ -147,7 +147,7 @@
 
         <div class="icon-container" id="ic">          
             <div class="icon" id="scanQR">              
-                <button class="click-button" id="scanQRB" style="border: none; background: none; cursor: pointer;" onclick="window.location.href = '/static/scanner.html'">              
+                <button class="click-button" id="scanQRB" style="border: none; background: none; cursor: pointer;" onclick="window.open('/static/scanner.html', '_blank')" >              
                 <svg class="click-svg" width="59" height="52" id="scanQRS" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_0_1)">
                     <path d="M23.5 13H25.5V11H23.5V13Z" fill="#89B5F6"/>
@@ -720,6 +720,7 @@
    <script>
         var prev_id='scanQRB';
         var cChange = 'yes';
+        var cColor = 'red';
 
         // MAX SIZE OF BUTTON
         const MAX_BUTTON_SIZE = 80
@@ -743,7 +744,7 @@
             // Increment the click count when the button is clicked
             clickCounts[button.id].count++;
 
-            console.log(button.id, clickCounts[button.id].count);
+            //console.log(button.id, clickCounts[button.id].count);
 
 
             // Increasing size of the button
@@ -752,7 +753,7 @@
 
             // Change the color of the button
             if (cChange == 'yes'){
-                colorChange(svgImage,button.id);
+                colorChange(svgImage,button.id,cColor);
             }
 
             // Rearrange the buttons based on most recently clicked button
@@ -767,7 +768,7 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ button_id: button.id, click_count: 1}),
+            body: JSON.stringify({ button_id: button.id, click_count: 1, color: cColor}), // send user name also
             });
             
         });
@@ -812,17 +813,17 @@
             }
             svgImage.setAttributeNS(null, 'height', y);
             svgImage.setAttributeNS(null, 'width', x); 
-            var x = parseFloat(svgImage.getAttributeNS(null, 'width'));
-            var y = parseFloat(svgImage.getAttributeNS(null, 'height'));
-            console.log(x, y)  
+            //var x = parseFloat(svgImage.getAttributeNS(null, 'width'));
+            //var y = parseFloat(svgImage.getAttributeNS(null, 'height'));
+            //console.log(x, y)  
 
             return;
         }
 
-        function colorChange(svgImage,id) {
+        function colorChange(svgImage,id,color) {
             const svgChildren = svgImage.childNodes; // Get all child nodes of the SVG element
             id=id.slice(0,-1)+'S';
-            console.log(id);
+            //console.log(id);
             const svgElement = document.getElementById(id);
 
             if (svgElement) {
@@ -830,8 +831,8 @@
 
             for (const child of svgChildren) {
                 if (child.nodeType === 1) { // Check if it's an element
-                child.style.fill = '#00FF00'; // Change the fill color to green
-                child.style.stroke = '#00FF00'; // Change the stroke color to
+                child.style.fill = color; // Change the fill color to green
+                child.style.stroke = color; // Change the stroke color to
                 }
             }
             }
@@ -843,7 +844,7 @@
 
                 // Get the child nodes of the div
                 var childN = container.childNodes[1];
-                console.log(childN);
+                //console.log(childN);
 
 
                 // Get the clicked button
@@ -868,42 +869,50 @@
                 console.log('Transcript:', transcript);
 
                 // Check if the transcript contains the ID of the target button
-                if (transcript.includes('scan QR')) {
+                if (transcript.includes('scan') || transcript.includes('QR') || transcript.includes('camera') || transcript.includes('code')) {
                 const targetButton = document.getElementById('scanQRB');
                 targetButton.click(); // Trigger the target button's click event
                 //console.log('Target button clicked');
                 }
-                if (transcript.includes('pay contact')) {
+                if (transcript.includes('pay') && ( transcript.includes('contact') || transcript.includes('contacts')) ) {
                 const targetButton = document.getElementById('payContactB');
                 targetButton.click(); // Trigger the target button's click event
                 //console.log('Target button clicked');
                 }
-                if (transcript.includes('pay phone')) {
+                if (transcript.includes('pay') && (transcript.includes('phone') || transcript.includes('number'))) { // duplicate page and extract count from backend and
+                    // update the button with most count, with size and color and position, return the rest to normal size
+                    // check separate for refresh also, make the above happen that time, and on going back, make sure the recently used button 
+                    // is put.
+
+                    // extract count from backend and take max and on land page should have the max count button on first
+                    // make sure to also store sessional count, so whenever i go back from a page to the first page, the button that is used
+                    // recently will be first instead of the one with the most count. Doubt is to ask, whether we want the most used button
+                    // to stick to the 2nd position always (in that session) and the recently used buttons will come and go at the first position.
                 const targetButton = document.getElementById('payPhoneB');
                 targetButton.click(); // Trigger the target button's click event
                 //console.log('Target button clicked');
                 }
-                if (transcript.includes('bank transfer')) {
+                if (transcript.includes('bank') && transcript.includes('transfer')) {
                 const targetButton = document.getElementById('bankTransferB');
                 targetButton.click(); // Trigger the target button's click event
                 //console.log('Target button clicked');
                 }
-                if (transcript.includes('pay upi')) {
+                if (transcript.includes('pay') && transcript.includes('upi')) {
                 const targetButton = document.getElementById('payUpiB');
                 targetButton.click(); // Trigger the target button's click event
                 //console.log('Target button clicked');
                 }
-                if (transcript.includes('self transfer')) {
+                if ((transcript.includes('self') && transcript.includes('transfer')) || transcript.includes('myself')) {
                 const targetButton = document.getElementById('selfTransferB');
                 targetButton.click(); // Trigger the target button's click event
                 //console.log('Target button clicked');
                 }
-                if (transcript.includes('bills')) {
+                if (transcript.includes('bills') || transcript.includes('bill')) {
                 const targetButton = document.getElementById('payBillsB');
                 targetButton.click(); // Trigger the target button's click event
                 //console.log('Target button clicked');
                 }
-                if (transcript.includes('mobile recharge')) {
+                if (transcript.includes('mobile') && transcript.includes('recharge') || transcript.includes('currency') || transcript.includes('recharge')) {
                 const targetButton = document.getElementById('mobileRechargeB');
                 targetButton.click(); // Trigger the target button's click event
                 //console.log('Target button clicked');
@@ -921,48 +930,52 @@
             alert('Speech recognition is not supported in this browser.');
             }
 
-            // const microphoneButton = document.getElementById('microphone-button');
+            // Mic Button movable code starts here
+            const microphoneButton = document.getElementById('microphone-button');
 
-            // let offsetX = 0;
-            // let offsetY = 0;
-            // let isDragging = false;
+            let offsetX = 0;
+            let offsetY = 0;
+            let isDragging = false;
 
-            // microphoneButton.addEventListener('mousedown', (event) => {
-            // event.preventDefault(); // Prevent default click event
-            // isDragging = true;
+            microphoneButton.addEventListener('mousedown', (event) => {
+            event.preventDefault(); // Prevent default click event
+            isDragging = true;
 
-            // offsetX = event.clientX - microphoneButton.offsetLeft;
-            // offsetY = event.clientY - microphoneButton.offsetTop;
-            // });
+            offsetX = event.clientX - microphoneButton.offsetLeft;
+            offsetY = event.clientY - microphoneButton.offsetTop;
+            });
 
-            // document.addEventListener('mousemove', (event) => {
-            // if (isDragging) {
-            //     let newLeft = event.clientX - offsetX;
-            //     let newTop = event.clientY - offsetY;
+            document.addEventListener('mousemove', (event) => {
+            if (isDragging) {
+                let newLeft = event.clientX - offsetX;
+                let newTop = event.clientY - offsetY;
 
-            //     // Restrict movement within the viewport
-            //     newLeft = Math.max(newLeft, 0);
-            //     newLeft = Math.min(newLeft, window.innerWidth - microphoneButton.offsetWidth);
+                // Restrict movement within the viewport
+                newLeft = Math.max(newLeft, 0);
+                newLeft = Math.min(newLeft, window.innerWidth - microphoneButton.offsetWidth);
 
-            //     newTop = Math.max(newTop, 0);
-            //     newTop = Math.min(newTop, window.innerHeight - microphoneButton.offsetHeight);
+                newTop = Math.max(newTop, 0);
+                newTop = Math.min(newTop, window.innerHeight - microphoneButton.offsetHeight);
 
-            //     microphoneButton.style.left = newLeft + 'px';
-            //     microphoneButton.style.top = newTop + 'px';
-            // }
-            // });
+                microphoneButton.style.left = newLeft + 'px';
+                microphoneButton.style.top = newTop + 'px';
+            }
+            });
 
-            // microphoneButton.addEventListener('mouseup', () => {
-            // isDragging = false;
+            microphoneButton.addEventListener('mouseup', () => {
+            isDragging = false;
 
-            // // Place the button without triggering click event
-            // placeButton();
-            // });
+            // Place the button without triggering click event
+            placeButton();
+            });
 
-            // function placeButton() {
-            // // Implement your desired placement logic here
-            // console.log('Button placed');
-            // }
+            function placeButton() {
+            // Implement your desired placement logic here
+            console.log('Button placed');
+            }
+            // Mic Button movable code ends here
+
+
 
     </script>
 

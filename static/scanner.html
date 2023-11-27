@@ -65,11 +65,18 @@
         <video id="camera-preview" autoplay></video>
     </div>
     <div class="square-container">
-        <p>hello my name is</p>
         <div class="rectangle"></div>
+    </div>
+    <div><br><br><br><br><br></div>
+    <div style="right:20px">
+        <button  id="goBackButton">Click to go back</button>
     </div>
 
     <script>
+        document.getElementById('goBackButton').addEventListener('click', function() {
+                    history.back();
+                });
+
         const timeoutPromise = new Promise((resolve, reject) => {
   setTimeout(() => {
     reject(new Error('Camera access timed out'));
