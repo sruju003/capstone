@@ -147,7 +147,7 @@
 
         <div class="icon-container" id="ic">          
             <div class="icon" id="scanQR">              
-                <button class="click-button" id="scanQRB" style="border: none; background: none; cursor: pointer;" onclick="window.open('/static/scanner.html', '_blank')" >              
+                <button class="click-button" id="scanQRB" style="border: none; background: none; cursor: pointer;" onclick="window.open('/scanner.html', '_blank')" >              
                 <svg class="click-svg" width="59" height="52" id="scanQRS" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_0_1)">
                     <path d="M23.5 13H25.5V11H23.5V13Z" fill="#89B5F6"/>
@@ -736,14 +736,58 @@
         clickCounts[button.id] = {count : 0};
         });
 
-        // To initialize the page with the maximum clicked button (taken from database per user) to come up front and enhanced
+        // TO KNOW THE USER WHO IS USING THE APPLICATION
+        // Create a URLSearchParams object
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Extract the authenticated_user value
+        const AuthenticatedUser = urlParams.get('authenticated_user').toLowerCase();
+
+        // Use the extracted value
+        //console.log('Authenticated User:', AuthenticatedUser);
+
+        // TO INITIALZE THE PAGE WITH THE MAXIMUM CLICKED BUTTON (TAKEN FROM THE DATABASE PER USER) TO COME UP FRONT AND ENHANCED
 
         window.onload = function() {
-        // Load the desired content or perform any actions here
-        console.log('Page loaded');
+            console.log('in load',AuthenticatedUser);
+            fetch('/data', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ authenticatedUser: AuthenticatedUser}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                //console.log('Authenticated_User:', data.authenticatedUser);
+                //console.log('Button ID:', data.id);
+                //console.log('Message:', data.message);
+                if (data.message != 'No button clicks found'){
+                var bID=data.id;
+
+                // Increasing size of the button
+
+                button_element=document.getElementById(bID);
+                const svgImage = button_element.querySelector('svg');
+                calcSVGButtonSize(button_element,svgImage);
+
+                // Change the color of the button
+                if (cChange == 'yes'){
+                    colorChange(svgImage,bID,cColor);
+                }
+
+                // Rearrange the buttons based on most recently clicked button
+                if (bID != prev_id){
+                    rearrangeButtons(bID);
+                    prev_id = bID;
+                }
+                //console.log('BID:', bID);
+            }}
+            );
         };
 
         // Iterate over each button and add a click event listener
+
         buttons.forEach((button) => {
         button.addEventListener('click', () => {
             // Increment the click count when the button is clicked
@@ -767,19 +811,22 @@
                 prev_id = button.id;
             }
 
+
             // Send the click count to the server
             fetch('/update_count', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ button_id: button.id, click_count: 1, color: cColor}), // send user name also
+            body: JSON.stringify({ button_id: button.id, click_count: 1, color: cColor, user_name: AuthenticatedUser, sessional_count:clickCounts[button.id].count }), 
             });
             
         });
         });
 
-        // Function to change button size based on click
+        // FUNCTION TO CHANGE BUTTON SIZE
+
+
         function calcSVGButtonSize(button,svgImage) {
 
             // Update the button size based on the click
@@ -825,6 +872,9 @@
             return;
         }
 
+        // FUNCTION TO CHANGE THE COLOR OF THE BUTTON
+
+
         function colorChange(svgImage,id,color) {
             const svgChildren = svgImage.childNodes; // Get all child nodes of the SVG element
             id=id.slice(0,-1)+'S';
@@ -842,6 +892,9 @@
             }
             }
         }
+
+        // FUNCTION TO REORDER THE BUTTONS
+
 
         function rearrangeButtons(buttonId) {
                 // Get the container element
@@ -862,6 +915,9 @@
                 // Insert the clicked button at the beginning of the container
                 container.insertBefore(clickedButton, childN);
             }
+
+            // CODE FOR SPEECH RECOG AND TASK EXECUTION
+
 
             // Check if browser supports SpeechRecognition API
             if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
@@ -935,7 +991,9 @@
             alert('Speech recognition is not supported in this browser.');
             }
 
-            // Mic Button movable code starts here
+            // MIC BUTTON MOVABLE CODE STARTS HERE
+
+
             const microphoneButton = document.getElementById('microphone-button');
 
             let offsetX = 0;
@@ -978,7 +1036,7 @@
             // Implement your desired placement logic here
             console.log('Button placed');
             }
-            // Mic Button movable code ends here
+            // MIC BUTTON MOVABLE CODE ENDS HERE
 
 
 
