@@ -184,6 +184,14 @@ def recognize_realtime_face(image_data):
 def authenticate_camera():
     return render_template('camera.html')
 
+@app.route('/scanner')
+def scanner():
+    return render_template('scanner.html')
+
+@app.route('/home')
+def home():
+    return render_template('gpayappredirect.html')
+
 @app.route('/authenticate_realtime', methods=['POST'])
 def authenticate_realtime():
     try:

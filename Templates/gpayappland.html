@@ -147,7 +147,7 @@
 
         <div class="icon-container" id="ic">          
             <div class="icon" id="scanQR">              
-                <button class="click-button" id="scanQRB" style="border: none; background: none; cursor: pointer;" onclick="window.open('/scanner.html', '_blank')" >              
+                <button class="click-button" id="scanQRB" style="border: none; background: none; cursor: pointer;" onclick="window.open('/scanner', '_blank')" >              
                 <svg class="click-svg" width="59" height="52" id="scanQRS" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_0_1)">
                     <path d="M23.5 13H25.5V11H23.5V13Z" fill="#89B5F6"/>
@@ -721,6 +721,7 @@
         var prev_id='scanQRB';
         var cChange = 'yes';
         var cColor = 'red';
+        var reg_user = 0;
 
         // MAX SIZE OF BUTTON
         const MAX_BUTTON_SIZE = 80
@@ -763,6 +764,7 @@
                 //console.log('Button ID:', data.id);
                 //console.log('Message:', data.message);
                 if (data.message != 'No button clicks found'){
+                reg_user=1;
                 var bID=data.id;
 
                 // Increasing size of the button
@@ -897,6 +899,7 @@
 
 
         function rearrangeButtons(buttonId) {
+            if(reg_user==0){
                 // Get the container element
                 var container = document.getElementById('ic');
 
@@ -915,6 +918,26 @@
                 // Insert the clicked button at the beginning of the container
                 container.insertBefore(clickedButton, childN);
             }
+            else{
+                // Get the container element
+                var container = document.getElementById('ic');
+
+                // Get the child nodes of the div
+                var childN = container.childNodes[3];
+                console.log(childN);
+
+
+                // // Get the clicked button
+                // buttonId=buttonId.slice(0,-1);
+                // var clickedButton = document.getElementById(buttonId);
+
+                // // Remove the clicked button from its current position
+                // container.removeChild(clickedButton);
+
+                // // Insert the clicked button at the beginning of the container
+                // container.insertBefore(clickedButton, childN);
+            }
+        }
 
             // CODE FOR SPEECH RECOG AND TASK EXECUTION
 
