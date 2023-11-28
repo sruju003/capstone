@@ -35,6 +35,7 @@ def update_count():
     button_id = data.get('button_id')
     click_count = data.get('click_count')
     user_name = data.get('user_name')
+    sessional_count = data.get('sessional_count')
 
     # Dynamically create or use the user-specific collection
     collection_name = f"button_clicks_{user_name}"
@@ -47,13 +48,13 @@ def update_count():
             count += click_count
             button_clicks.update_one(
                 {'buttonId': button_id},
-                {'$set': {'count': count}},
+                {'$set': {'count': count, 'sessional_count': sessional_count}},
                 upsert=True
             )
         else:  # Create a new button if it doesn't exist
             button_clicks.update_one(
                 {'buttonId': button_id},
-                {'$set': {'count': click_count}},
+                {'$set': {'count': click_count, 'sessional_count': sessional_count}},
                 upsert=True
             )
 
