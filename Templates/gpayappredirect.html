@@ -743,9 +743,6 @@
         // Extract the authenticated_user value
         const AuthenticatedUser = urlParams.get('authenticated_user').toLowerCase();
 
-        // Use the extracted value
-        //console.log('Authenticated User:', AuthenticatedUser);
-
         // TO INITIALZE THE PAGE WITH THE MAXIMUM CLICKED BUTTON (TAKEN FROM THE DATABASE PER USER) TO COME UP FRONT AND ENHANCED
 
         window.onload = function() {
@@ -784,6 +781,12 @@
                 //console.log('BID:', bID);
             }}
             );
+        };
+
+        window.onbeforeunload = function() {
+            // Your code to execute when the page is closed
+            console.log('Page is closing');
+            // ...
         };
 
         // Iterate over each button and add a click event listener
