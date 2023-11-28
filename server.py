@@ -28,37 +28,6 @@ db = client['button_clicks_db']
 #button_clicks = db['button_clicks'] #choose a specific collection based on the user.
 
 
-# @app.route('/update_count', methods=['POST'])
-# def update_count():
-#     data = request.get_json()
-#     button_id = data.get('button_id')
-#     click_count = data.get('click_count')
-#     user_name = data.get('user_name')
-    
-#     # Update or insert the count into the MongoDB collection
-#     if button_id and click_count is not None:
-#         button_count = button_clicks.find_one({'buttonId': button_id})
-#         if button_count: # based on the user received create a db if it doesn't exist else update over the existing one.
-#             # If button exists, then update the value of the click_count by iterating over the existing value
-#             count = button_count.get('count', 0)
-#             count += click_count
-#             button_clicks.update_one(
-#                 {'buttonId': button_id},
-#                 {'$set': {'count': count}},
-#                 upsert=True
-#             )
-#         else:
-#             # Create a new button if it doesn't exist
-#             button_clicks.update_one(
-#                 {'buttonId': button_id},
-#                 {'$set': {'count': click_count}},
-#                 upsert=True
-#             )
-        
-#         return jsonify({'message': 'Click count updated successfully'})
-#     else:
-#         return jsonify({'message': 'Invalid data'}), 400
-
 @app.route('/update_count', methods=['POST'])
 def update_count():
     data = request.get_json()
@@ -90,6 +59,44 @@ def update_count():
         return jsonify({'message': 'Click count updated successfully'})
     else:
         return jsonify({'message': 'Invalid data'}), 400
+
+
+@app.route('/data', methods=['POST'])
+def get_data():
+    if request.method == 'POST':
+        data = request.get_json()
+        user_name = data.get('authenticatedUser')
+        collection_name = f"button_clicks_{user_name}"
+        button_clicks = db[collection_name]
+
+        # Retrieve all button clicks
+        all_button_clicks = list(button_clicks.find())
+
+        # Print all button clicks and their counts
+        for button_click in all_button_clicks:
+            button_id = button_click.get('buttonId')
+            count = button_click.get('count', 0)
+            print(f"Button ID: {button_id}, Count: {count}")
+
+        # Find the button with the maximum count
+        max_count_button = button_clicks.find_one(sort=[('count', -1), ('buttonId', 1)], limit=1)
+
+        if max_count_button:
+            id=max_count_button.get('buttonId')
+            max_count = max_count_button.get('count', 0)
+            return jsonify({
+                'authenticatedUser': user_name,
+                'id': id,
+                'message': max_count
+            })
+        else:
+            return jsonify({
+                'authenticatedUser': user_name,
+                'message': 'No button clicks found'
+            })
+
+    else:
+        return jsonify({'message': 'Invalid request method'}), 400
 
 
 @app.route('/get_count/<user_name>/<button_id>', methods=['GET'])
@@ -220,8 +227,8 @@ known_face_encodings, known_face_names = load_face_encodings(known_faces_file)
 def encode_reference():
     try:
         # Specify paths and names for known faces
-        known_image_paths = ["vishnu.jpg"]
-        known_names = ["Vishnu"]
+        known_image_paths = ["vishnu.jpg","keerthi.jpg"]
+        known_names = ["Vishnu","Keerthi"]
 
         # Save the fresh encodings to the file
         save_face_encodings(known_faces_file, known_image_paths, known_names)

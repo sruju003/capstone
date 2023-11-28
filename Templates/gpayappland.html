@@ -736,9 +736,39 @@
         clickCounts[button.id] = {count : 0};
         });
 
-        
+        // TO KNOW THE USER WHO IS USING THE APPLICATION
+        // Create a URLSearchParams object
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Extract the authenticated_user value
+        const AuthenticatedUser = urlParams.get('authenticated_user').toLowerCase();
+
+        // Use the extracted value
+        //console.log('Authenticated User:', AuthenticatedUser);
+
+        // TO INITIALZE THE PAGE WITH THE MAXIMUM CLICKED BUTTON (TAKEN FROM THE DATABASE PER USER) TO COME UP FRONT AND ENHANCED
+
+        window.onload = function() {
+            console.log('in load',AuthenticatedUser);
+            fetch('/data', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ authenticatedUser: AuthenticatedUser}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                //console.log('Authenticated_User:', data.authenticatedUser);
+                //console.log('Button ID:', data.id);
+                //console.log('Message:', data.message);
+                var bID=data.AuthenticatedUser;
+                console.log('BID:', bID);
+            });
+        };
 
         // Iterate over each button and add a click event listener
+
         buttons.forEach((button) => {
         button.addEventListener('click', () => {
             // Increment the click count when the button is clicked
@@ -762,14 +792,6 @@
                 prev_id = button.id;
             }
 
-            // Create a URLSearchParams object
-            const urlParams = new URLSearchParams(window.location.search);
-
-            // Extract the authenticated_user value
-            const authenticatedUser = urlParams.get('authenticated_user').toLowerCase();
-
-            // Use the extracted value
-            console.log('Authenticated User:', authenticatedUser);
 
             // Send the click count to the server
             fetch('/update_count', {
@@ -777,13 +799,15 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ button_id: button.id, click_count: 1, color: cColor, user_name: authenticatedUser}), // send user name also
+            body: JSON.stringify({ button_id: button.id, click_count: 1, color: cColor, user_name: authenticatedUser}), 
             });
             
         });
         });
 
-        // Function to change button size based on click
+        // FUNCTION TO CHANGE BUTTON SIZE
+
+
         function calcSVGButtonSize(button,svgImage) {
 
             // Update the button size based on the click
@@ -829,6 +853,9 @@
             return;
         }
 
+        // FUNCTION TO CHANGE THE COLOR OF THE BUTTON
+
+
         function colorChange(svgImage,id,color) {
             const svgChildren = svgImage.childNodes; // Get all child nodes of the SVG element
             id=id.slice(0,-1)+'S';
@@ -846,6 +873,9 @@
             }
             }
         }
+
+        // FUNCTION TO REORDER THE BUTTONS
+
 
         function rearrangeButtons(buttonId) {
                 // Get the container element
@@ -866,6 +896,9 @@
                 // Insert the clicked button at the beginning of the container
                 container.insertBefore(clickedButton, childN);
             }
+
+            // CODE FOR SPEECH RECOG AND TASK EXECUTION
+
 
             // Check if browser supports SpeechRecognition API
             if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
@@ -939,7 +972,9 @@
             alert('Speech recognition is not supported in this browser.');
             }
 
-            // Mic Button movable code starts here
+            // MIC BUTTON MOVABLE CODE STARTS HERE
+
+
             const microphoneButton = document.getElementById('microphone-button');
 
             let offsetX = 0;
@@ -982,7 +1017,7 @@
             // Implement your desired placement logic here
             console.log('Button placed');
             }
-            // Mic Button movable code ends here
+            // MIC BUTTON MOVABLE CODE ENDS HERE
 
 
 

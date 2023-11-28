@@ -736,7 +736,12 @@
         clickCounts[button.id] = {count : 0};
         });
 
-        
+        // To initialize the page with the maximum clicked button (taken from database per user) to come up front and enhanced
+
+        window.onload = function() {
+        // Load the desired content or perform any actions here
+        console.log('Page loaded');
+        };
 
         // Iterate over each button and add a click event listener
         buttons.forEach((button) => {
