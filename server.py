@@ -5,6 +5,7 @@ import pickle, base64
 from io import BytesIO
 from PIL import Image
 import numpy as np
+import os
 
 app = Flask(__name__)
 
@@ -222,16 +223,17 @@ def save_face_encodings(file_path, image_paths, names):
 
 known_faces_file = "known_faces.pkl"
 known_face_encodings, known_face_names = load_face_encodings(known_faces_file)
+known_image_filenames = ["vishnu.jpg", "keerthi.jpg", "samyam.jpg", "srujana.jpg"]
+known_names = ["Vishnu", "Keerthi", "Samyam", "Srujana"]
 
 @app.route('/encode_reference', methods=['GET'])
 def encode_reference():
     try:
-        # Specify paths and names for known faces
-        known_image_paths = ["vishnu.jpg","keerthi.jpg"]
-        known_names = ["Vishnu","Keerthi"]
+        # known_image_filenames = ["vishnu.jpg", "keerthi.jpg"]
+        # known_names = ["Vishnu", "Keerthi"]
 
         # Save the fresh encodings to the file
-        save_face_encodings(known_faces_file, known_image_paths, known_names)
+        save_face_encodings(known_faces_file, known_image_filenames, known_names)
 
         return jsonify({'message': 'Reference image encoded successfully'})
 
@@ -239,9 +241,12 @@ def encode_reference():
         print(e)
         return jsonify({'message': 'An error occurred during encoding'}), 500
 
-
+known_image_paths = [os.path.join(app.config['ENCODING_FOLDER'], filename) for filename in known_image_filenames]
+    
 app.config['STATIC_URL_PATH'] = '/static'
 app.config['STATIC_FOLDER'] = 'static'
+app.config['ENCODING_PATH'] = '/pics'
+app.config['ENCODING_FOLDER'] = 'pics'
 
 if __name__ == '__main__':
     app.run(debug=True)
