@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow-x: hidden; /* Disable horizontal scrolling */
+        }
+
+        body {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            position: relative; /* Add this to make positioning easier */
+        }
+
+        .phone-screen {
+            width: 100%; /* Responsive width */
+            max-width: 414px; /* Max phone screen width */
+            height: 100vh;
+            background-color: #1f1f1f;
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds the screen */
+            z-index: 0;
+            position: relative; /* Add this for proper positioning */
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="phone-screen">
+
+        <div style="display: flex; align-items: center; justify-content: center; margin-top: 30%;">
+            <p style="font-size: 60px; color: #ffffff;">₹</p>
+            <input type="text" placeholder="Pay" style="font-size: 60px; max-width: 30%; background-color: none; border: none; background: none; color: #ffffff;">
+        </div>
+
+        <p style="font-size: 20px; color: #ffffff; margin-left: 30%; margin-top: 0px; padding-top: 0px; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; ">to Mr. Athreya</p>
+        
+
+        
+                
+        
+
+
+    </div>
+</body>
+</html>
