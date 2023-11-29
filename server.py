@@ -187,11 +187,18 @@ def authenticate_camera():
 
 @app.route('/scanner')
 def scanner():
-    return render_template('scanner.html')
+    authenticated_user = request.args.get('authenticated_user')
+    return render_template('scanner.html', authenticated_user=authenticated_user)
 
 @app.route('/home')
 def home():
-    return render_template('gpayappredirect.html')
+    authenticated_user = request.args.get('authenticated_user')
+    return render_template('gpayappredirect.html', authenticated_user=authenticated_user)
+
+@app.route('/index')
+def index():
+    authenticated_user = request.args.get('authenticated_user')
+    return render_template('gpayappland.html', authenticated_user=authenticated_user)
 
 @app.route('/authenticate_realtime', methods=['POST'])
 def authenticate_realtime():
@@ -210,51 +217,58 @@ def authenticate_realtime():
         print(e)
         return jsonify({'message': 'An error occurred during real-time authentication'}), 500
 
-@app.route('/index')
-def index():
-    authenticated_user = request.args.get('authenticated_user')
-    return render_template('gpayappland.html', authenticated_user=authenticated_user)
-
 def save_face_encodings(file_path, image_paths, names):
     known_face_encodings = []
 
     for image_path in image_paths:
         # Load the image
-        known_image = face_recognition.load_image_file(image_path)
+        path=os.path.join(app.config['ENCODING_FOLDER'],image_path)
+        #print(path)
+        known_image = face_recognition.load_image_file(path)
 
         # Encode the face
+        #print('before encoding')
         face_encoding = face_recognition.face_encodings(known_image)[0]
+        #print('between encoding')
         known_face_encodings.append(face_encoding)
+        #print('after encoding')
 
     # Save the encodings and corresponding names to a file
+    #print('before storing into file')
     with open(file_path, 'wb') as file:
         pickle.dump((known_face_encodings, names), file)
 
-known_faces_file = "known_faces.pkl"
-known_face_encodings, known_face_names = load_face_encodings(known_faces_file)
-known_image_filenames = ["vishnu.jpg", "keerthi.jpg", "samyam.jpg", "srujana.jpg"]
-known_names = ["Vishnu", "Keerthi", "Samyam", "Srujana"]
 
 @app.route('/encode_reference', methods=['GET'])
 def encode_reference():
     try:
-        # known_image_filenames = ["vishnu.jpg", "keerthi.jpg"]
-        # known_names = ["Vishnu", "Keerthi"]
+        # Get the list of image filenames in the 'pics' folder
+        image_filenames = os.listdir(app.config['ENCODING_FOLDER'])
+        print(image_filenames)
+
+        # Update the known_image_filenames and known_names lists
+        known_image_filenames = []
+        known_names = []
+
+        for filename in image_filenames:
+            if filename.endswith('.jpg') or filename.endswith('.png'):
+                known_image_filenames.append(filename)
+                name = filename.split('.')[0]
+                known_names.append(name)
 
         # Save the fresh encodings to the file
         save_face_encodings(known_faces_file, known_image_filenames, known_names)
 
-        return jsonify({'message': 'Reference image encoded successfully'})
+        return jsonify({'message': 'Reference images encoded successfully'})
 
     except Exception as e:
         print(e)
         return jsonify({'message': 'An error occurred during encoding'}), 500
 
-known_image_paths = [os.path.join(app.config['ENCODING_FOLDER'], filename) for filename in known_image_filenames]
     
 app.config['STATIC_URL_PATH'] = '/static'
 app.config['STATIC_FOLDER'] = 'static'
-app.config['ENCODING_PATH'] = '/pics'
+app.config['ENCODING_URL_PATH'] = '/pics'
 app.config['ENCODING_FOLDER'] = 'pics'
 
 if __name__ == '__main__':

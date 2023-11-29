@@ -924,18 +924,18 @@
 
                 // Get the child nodes of the div
                 var childN = container.childNodes[3];
-                console.log(childN);
+                //console.log(childN);
 
 
-                // // Get the clicked button
-                // buttonId=buttonId.slice(0,-1);
-                // var clickedButton = document.getElementById(buttonId);
+                // Get the clicked button
+                buttonId=buttonId.slice(0,-1);
+                var clickedButton = document.getElementById(buttonId);
 
-                // // Remove the clicked button from its current position
-                // container.removeChild(clickedButton);
+                // Remove the clicked button from its current position
+                container.removeChild(clickedButton);
 
-                // // Insert the clicked button at the beginning of the container
-                // container.insertBefore(clickedButton, childN);
+                // Insert the clicked button at the beginning of the container
+                container.insertBefore(clickedButton, childN);
             }
         }
 
