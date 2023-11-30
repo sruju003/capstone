@@ -35,26 +35,32 @@ def update_count():
     button_id = data.get('button_id')
     click_count = data.get('click_count')
     user_name = data.get('user_name')
-    sessional_count = data.get('sessional_count')
 
     # Dynamically create or use the user-specific collection
     collection_name = f"button_clicks_{user_name}"
     button_clicks = db[collection_name]
 
     if button_id and click_count is not None:
+        button_reset = button_clicks.find_one({'recently_clicked': 1})
+        if button_reset is not None:
+            button_clicks.update_one(
+                {'buttonId': button_reset['buttonId']},
+                {'$set': {'recently_clicked': 0}},
+                upsert=True
+            )
         button_count = button_clicks.find_one({'buttonId': button_id})
         if button_count:  # Update the click count for the existing button
             count = button_count.get('count', 0)
             count += click_count
             button_clicks.update_one(
                 {'buttonId': button_id},
-                {'$set': {'count': count, 'sessional_count': sessional_count}},
+                {'$set': {'count': count, 'recently_clicked': 1}},
                 upsert=True
             )
         else:  # Create a new button if it doesn't exist
             button_clicks.update_one(
                 {'buttonId': button_id},
-                {'$set': {'count': click_count, 'sessional_count': sessional_count}},
+                {'$set': {'count': click_count, 'recently_clicked': 1}},
                 upsert=True
             )
 
@@ -63,22 +69,13 @@ def update_count():
         return jsonify({'message': 'Invalid data'}), 400
 
 
-@app.route('/data', methods=['POST'])
-def get_data():
+@app.route('/datamax', methods=['POST'])
+def get_data_max():
     if request.method == 'POST':
         data = request.get_json()
         user_name = data.get('authenticatedUser')
         collection_name = f"button_clicks_{user_name}"
         button_clicks = db[collection_name]
-
-        # Retrieve all button clicks
-        all_button_clicks = list(button_clicks.find())
-
-        # Print all button clicks and their counts
-        for button_click in all_button_clicks:
-            button_id = button_click.get('buttonId')
-            count = button_click.get('count', 0)
-            print(f"Button ID: {button_id}, Count: {count}")
 
         # Find the button with the maximum count
         max_count_button = button_clicks.find_one(sort=[('count', -1), ('buttonId', 1)], limit=1)
@@ -90,6 +87,34 @@ def get_data():
                 'authenticatedUser': user_name,
                 'id': id,
                 'message': max_count
+            })
+        else:
+            return jsonify({
+                'authenticatedUser': user_name,
+                'message': 'No button clicks found'
+            })
+
+    else:
+        return jsonify({'message': 'Invalid request method'}), 400
+    
+@app.route('/datarecent', methods=['POST'])
+def get_data_recent():
+    if request.method == 'POST':
+        data = request.get_json()
+        user_name = data.get('authenticatedUser')
+        collection_name = f"button_clicks_{user_name}"
+        button_clicks = db[collection_name]
+
+        # Find the button with the maximum count
+        recent_button = button_clicks.find_one({'recently_clicked': 1})
+
+        if recent_button:
+            id=recent_button.get('buttonId')
+            print(id)
+            return jsonify({
+                'authenticatedUser': user_name,
+                'id': id,
+                'message': 'Button Found'
             })
         else:
             return jsonify({

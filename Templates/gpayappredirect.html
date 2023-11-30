@@ -147,7 +147,7 @@
 
         <div class="icon-container" id="ic">          
             <div class="icon" id="scanQR">              
-                <button class="click-button" id="scanQRB" style="border: none; background: none; cursor: pointer;" onclick="window.open('/scanner.html', '_blank')" >              
+                <button class="click-button" id="scanQRB" style="border: none; background: none; cursor: pointer;" onclick="window.open('/scanner?authenticated_user=' + AuthenticatedUser, '_blank')" >              
                 <svg class="click-svg" width="59" height="52" id="scanQRS" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_0_1)">
                     <path d="M23.5 13H25.5V11H23.5V13Z" fill="#89B5F6"/>
@@ -721,6 +721,128 @@
         var prev_id='scanQRB';
         var cChange = 'yes';
         var cColor = 'red';
+        var reg_user = 0;
+        var maxid = '';
+
+        // TO KNOW THE USER WHO IS USING THE APPLICATION
+        // Create a URLSearchParams object
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Extract the authenticated_user value
+        const AuthenticatedUser = urlParams.get('authenticated_user').toLowerCase();
+
+        // Use the extracted value
+        //console.log('Authenticated User:', AuthenticatedUser);
+
+        // TO INITIALZE THE PAGE WITH THE MAXIMUM CLICKED BUTTON (TAKEN FROM THE DATABASE PER USER) TO COME UP FRONT AND ENHANCED
+        // AND PUT THE MOST RECENTLY CLICKED BUTTON NEXT TO IT
+
+        window.onload = function() {
+            console.log('in load',AuthenticatedUser);
+            fetch('/datamax', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ authenticatedUser: AuthenticatedUser}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                //console.log('Authenticated_User:', data.authenticatedUser);
+                //console.log('Button ID:', data.id);
+                //console.log('Message:', data.message);
+                if (data.message != 'No button clicks found'){
+                reg_user=1;
+                var bID=data.id;
+                maxid=bID;
+
+                // Increasing size of the button
+
+                button_element=document.getElementById(bID);
+                const svgImage = button_element.querySelector('svg');
+                calcSVGButtonSize(button_element,svgImage);
+
+                // Change the color of the button
+                if (cChange == 'yes'){
+                    colorChange(svgImage,bID,cColor);
+                }
+
+                // Rearrange the buttons based on most clicked button
+                // Get the container element
+                var container = document.getElementById('ic');
+
+                // Get the child nodes of the div
+                var childN = container.childNodes[1];
+                //console.log(childN);
+
+                // Get the clicked button
+                buttonId=bID.slice(0,-1);
+                var clickedButton = document.getElementById(buttonId);
+
+                // Remove the clicked button from its current position
+                container.removeChild(clickedButton);
+
+                // Insert the clicked button at the beginning of the container
+                container.insertBefore(clickedButton, childN);
+                //console.log('BID:', bID);
+            }}
+            );
+            fetch('/datarecent', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ authenticatedUser: AuthenticatedUser}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                //console.log('Authenticated_User:', data.authenticatedUser);
+                //console.log('Button ID:', data.id);
+                //console.log('Message:', data.message);
+                if (data.message != 'No button clicks found'){
+                reg_user=1;
+                var bID=data.id;
+                if (maxid!=bID){
+
+                // Increasing size of the button
+
+                button_element=document.getElementById(bID);
+                const svgImage = button_element.querySelector('svg');
+                calcSVGButtonSize(button_element,svgImage);
+
+                // Change the color of the button
+                if (cChange == 'yes'){
+                    colorChange(svgImage,bID,cColor);
+                }
+
+                // Rearrange the buttons based on most clicked button
+                // Get the container element
+                var container = document.getElementById('ic');
+
+                // Get the child nodes of the div
+                if (bID == 'scanQRB'){
+                    var childN = container.childNodes[3];
+                }
+                else {
+                    var childN = container.childNodes[2];
+                }
+                
+                //console.log(childN);
+
+                // Get the clicked button
+                buttonId=bID.slice(0,-1);
+                var clickedButton = document.getElementById(buttonId);
+
+                // Remove the clicked button from its current position
+                container.removeChild(clickedButton);
+
+                // Insert the clicked button at the beginning of the container
+                container.insertBefore(clickedButton, childN);
+                //console.log('BID:', bID);
+            }
+            }}
+            );
+        };
 
         // MAX SIZE OF BUTTON
         const MAX_BUTTON_SIZE = 80
@@ -735,59 +857,6 @@
         buttons.forEach((button) => {
         clickCounts[button.id] = {count : 0};
         });
-
-        // TO KNOW THE USER WHO IS USING THE APPLICATION
-        // Create a URLSearchParams object
-        const urlParams = new URLSearchParams(window.location.search);
-
-        // Extract the authenticated_user value
-        const AuthenticatedUser = urlParams.get('authenticated_user').toLowerCase();
-
-        // TO INITIALZE THE PAGE WITH THE MAXIMUM CLICKED BUTTON (TAKEN FROM THE DATABASE PER USER) TO COME UP FRONT AND ENHANCED
-
-        window.onload = function() {
-            console.log('in load',AuthenticatedUser);
-            fetch('/data', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ authenticatedUser: AuthenticatedUser}),
-            })
-            .then(response => response.json())
-            .then(data => {
-                //console.log('Authenticated_User:', data.authenticatedUser);
-                //console.log('Button ID:', data.id);
-                //console.log('Message:', data.message);
-                if (data.message != 'No button clicks found'){
-                var bID=data.id;
-
-                // Increasing size of the button
-
-                button_element=document.getElementById(bID);
-                const svgImage = button_element.querySelector('svg');
-                calcSVGButtonSize(button_element,svgImage);
-
-                // Change the color of the button
-                if (cChange == 'yes'){
-                    colorChange(svgImage,bID,cColor);
-                }
-
-                // Rearrange the buttons based on most recently clicked button
-                if (bID != prev_id){
-                    rearrangeButtons(bID);
-                    prev_id = bID;
-                }
-                //console.log('BID:', bID);
-            }}
-            );
-        };
-
-        window.onbeforeunload = function() {
-            // Your code to execute when the page is closed
-            console.log('Page is closing');
-            // ...
-        };
 
         // Iterate over each button and add a click event listener
 
@@ -814,6 +883,11 @@
                 prev_id = button.id;
             }
 
+            
+
+
+            // get the [5] element node every time and revert the changes
+            // send only the clicked button as 1 into the database and make the rest 0.
 
             // Send the click count to the server
             fetch('/update_count', {
@@ -821,7 +895,7 @@
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ button_id: button.id, click_count: 1, color: cColor, user_name: AuthenticatedUser, sessional_count:clickCounts[button.id].count }), 
+            body: JSON.stringify({ button_id: button.id, click_count: 1, color: cColor, user_name: AuthenticatedUser }), 
             });
             
         });
@@ -900,11 +974,30 @@
 
 
         function rearrangeButtons(buttonId) {
+            if(reg_user==0){
                 // Get the container element
                 var container = document.getElementById('ic');
 
                 // Get the child nodes of the div
                 var childN = container.childNodes[1];
+                //console.log(childN);
+
+                // Get the clicked button
+                buttonId=buttonId.slice(0,-1);
+                var clickedButton = document.getElementById(buttonId);
+
+                // Remove the clicked button from its current position
+                container.removeChild(clickedButton);
+
+                // Insert the clicked button at the beginning of the container
+                container.insertBefore(clickedButton, childN);
+            }
+            else{
+                // Get the container element
+                var container = document.getElementById('ic');
+
+                // Get the child nodes of the div
+                var childN = container.childNodes[2];
                 //console.log(childN);
 
 
@@ -918,6 +1011,7 @@
                 // Insert the clicked button at the beginning of the container
                 container.insertBefore(clickedButton, childN);
             }
+        }
 
             // CODE FOR SPEECH RECOG AND TASK EXECUTION
 

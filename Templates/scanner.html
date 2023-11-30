@@ -69,13 +69,16 @@
     </div>
     <div><br><br><br><br><br></div>
     <div style="right:20px">
-        <button  id="goBackButton" onclick="window.open('/home', '_blank')">Click to go back</button>
+        <button  id="goBackButton" onclick="window.open('/home?authenticated_user=' + AuthenticatedUser, '_blank')">Click to go back</button>
     </div>
 
     <script>
-        document.getElementById('goBackButton').addEventListener('click', function() {
-                    history.back();
-                });
+        // TO KNOW THE USER WHO IS USING THE APPLICATION
+        // Create a URLSearchParams object
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Extract the authenticated_user value
+        const AuthenticatedUser = urlParams.get('authenticated_user').toLowerCase();
 
         const timeoutPromise = new Promise((resolve, reject) => {
   setTimeout(() => {
