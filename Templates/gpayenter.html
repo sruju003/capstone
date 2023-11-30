@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow-x: hidden; /* Disable horizontal scrolling */
+        }
+
+        body {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            position: relative; /* Add this to make positioning easier */
+        }
+
+        .phone-screen {
+            width: 100%; /* Responsive width */
+            max-width: 414px; /* Max phone screen width */
+            height: 100vh;
+            background-color: #1f1f1f;
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds the screen */
+            z-index: 0;
+            position: relative; /* Add this for proper positioning */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 20px; /* Space from the margin on top */
+        }
+
+        .textbox {
+            width: 80%; /* Adjust width as needed */
+            margin-bottom: 20px; /* Space between textbox and dialpad */
+            outline: 2px solid #89B5F6; /* Blue outline */
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #2D2E30;
+            font-size: 45px;
+            color: #fff;
+        }
+
+        .dialpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            max-width: 400px; /* Adjust width as needed */
+        }
+
+        .dialpad button {
+            width: 100%;
+            padding: 15px;
+            font-size: 30px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="phone-screen">
+
+        <br><br><br><br>
+
+        <input type="text" class="textbox" placeholder="Phone Number" />
+        <div class="dialpad">
+            <button onclick="sendNumber('1')">1</button>
+            <button onclick="sendNumber('2')">2</button>
+            <button onclick="sendNumber('3')">3</button>
+            <button onclick="sendNumber('4')">4</button>
+            <button onclick="sendNumber('5')">5</button>
+            <button onclick="sendNumber('6')">6</button>
+            <button onclick="sendNumber('7')">7</button>
+            <button onclick="sendNumber('8')">8</button>
+            <button onclick="sendNumber('9')">9</button>
+            <button onclick="sendNumber('backspace')">⌫</button>
+            <button onclick="sendNumber('0')">0</button>
+            <a href='/success'><button onclick="sendNumber('done')" style="background-color: #89B5F6;">✔</button></a>
+        </div>
+
+
+      
+       
+</div>
+
+
+
+<script>
+    let enteredNumbers = ''; // Variable to store entered numbers
+
+    function sendNumber(number) {
+        let textbox = document.querySelector('.textbox');
+
+        if (number === 'backspace') {
+            // Remove the last character from the textbox
+            textbox.value = textbox.value.slice(0, -1);
+            enteredNumbers = textbox.value;
+        } else if (number === 'done') {
+            // Send enteredNumbers to the Flask backend
+            if (enteredNumbers !== '') {
+                fetch('/send-numbers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ numbers: enteredNumbers })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Numbers sent successfully.');
+                        // Clear enteredNumbers or perform any other actions after successful sending
+                        enteredNumbers = '';
+                    } else {
+                        console.error('Failed to send numbers.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending numbers:', error);
+                });
+            } else {
+                console.log('No numbers to send.');
+            }
+            textbox.value = ''; // Clear the textbox
+        } else {
+            // Append the clicked number to the textbox value
+            textbox.value += number;
+            enteredNumbers = textbox.value;
+        }
+    }
+</script>
+
+
+
+</body>
+</html>
