@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow-x: hidden; /* Disable horizontal scrolling */
+        }
+
+        body {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            position: relative; /* Add this to make positioning easier */
+        }
+
+        .phone-screen {
+            width: 100%; /* Responsive width */
+            max-width: 414px; /* Max phone screen width */
+            height: 100vh;
+            background-color: #1f1f1f;
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds the screen */
+            z-index: 0;
+            position: relative; /* Add this for proper positioning */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 20px; /* Space from the margin on top */
+        }
+
+        .textbox {
+            width: 80%; /* Adjust width as needed */
+            margin-bottom: 20px; /* Space between textbox and dialpad */
+            outline: 2px solid #89B5F6; /* Blue outline */
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #2D2E30;
+            font-size: 45px;
+            color: #fff;
+        }
+
+        .dialpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            max-width: 400px; /* Adjust width as needed */
+        }
+
+        .dialpad button {
+            width: 100%;
+            padding: 15px;
+            font-size: 30px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .floating-button {
+            position: absolute;
+            z-index: 10;
+            left: 45%;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .microphone-icon {
+            height: 30px;
+            width: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="phone-screen">
+
+        <div>
+            <button id="microphone-button" class="floating-button">
+                <img class="microphone-icon" src="static\mic.png" alt="Your Image" />
+            </button>
+        </div>
+
+        <br><br><br><br>
+
+        <input id="inputnumber" type="text" class="textbox" placeholder="Phone Number" />
+        <div class="dialpad">
+            <button id="one" onclick="sendNumber('1')">1</button>
+            <button id="two" onclick="sendNumber('2')">2</button>
+            <button id="three" onclick="sendNumber('3')">3</button>
+            <button id="four" onclick="sendNumber('4')">4</button>
+            <button id="five" onclick="sendNumber('5')">5</button>
+            <button id="six" onclick="sendNumber('6')">6</button>
+            <button id="seven" onclick="sendNumber('7')">7</button>
+            <button id="eight" onclick="sendNumber('8')">8</button>
+            <button id="nine" onclick="sendNumber('9')">9</button>
+            <button id="back" onclick="sendNumber('backspace')">⌫</button>
+            <button id="zero" onclick="sendNumber('0')">0</button>
+            <button id="done" onclick="sendNumber('done')" style="background-color: #89B5F6;">✔</button>
+        </div>
+
+
+      
+       
+</div>
+
+
+
+<script>
+
+    // TO KNOW THE USER WHO IS USING THE APPLICATION
+
+    // Create a URLSearchParams object
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Extract the authenticated_user value
+    const AuthenticatedUser = urlParams.get('authenticated_user').toLowerCase();
+
+    let enteredNumbers = ''; // Variable to store entered numbersr
+
+    function sendNumber(number) {
+        let textbox = document.querySelector('.textbox');
+
+        if (number === 'backspace') {
+            // Remove the last character from the textbox
+            textbox.value = textbox.value.slice(0, -1);
+            enteredNumbers = textbox.value;
+        } else if (number === 'done') {
+            // Send enteredNumbers to the Flask backend
+            if (enteredNumbers !== '') {
+
+            // Send the payee number to the server
+            fetch('/payeeinfoput', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ authenticatedUser: AuthenticatedUser, payee: enteredNumbers, amount: 0 }), 
+            });
+
+            window.open('/gpayamt?authenticated_user=' + AuthenticatedUser,'_blank')
+            } else {
+                console.log('No numbers to send.');
+            }
+            textbox.value = ''; // Clear the textbox
+        } else {
+            // Append the clicked number to the textbox value
+            textbox.value += number;
+            enteredNumbers = textbox.value;
+        }
+    }
+
+            // Check if browser supports SpeechRecognition API
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+        // Set up event handlers for recognition events
+        recognition.continuous = false;
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            console.log('Transcript:', transcript);
+
+            // Extract numbers from the transcript
+            const numbers = transcript.match(/\d+/g); // Use a regular expression to extract all occurrences of digits
+
+            // Update the input field with the extracted numbers
+            if (numbers) {
+            const inputField = document.getElementById('inputnumber');
+            inputField.value = numbers.join(''); // Join the extracted numbers into a single string
+            }
+        };
+
+        // Start speech recognition when the button is clicked
+        document.getElementById('microphone-button').addEventListener('click', () => {
+            recognition.start();
+        });
+        } else {
+        alert('Speech recognition is not supported in this browser.');
+        }
+
+        // MIC BUTTON MOVABLE CODE STARTS HERE
+
+
+        const microphoneButton = document.getElementById('microphone-button');
+
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+
+        microphoneButton.addEventListener('mousedown', (event) => {
+        event.preventDefault(); // Prevent default click event
+        isDragging = true;
+
+        offsetX = event.clientX - microphoneButton.offsetLeft;
+        offsetY = event.clientY - microphoneButton.offsetTop;
+        });
+
+        document.addEventListener('mousemove', (event) => {
+        if (isDragging) {
+            let newLeft = event.clientX - offsetX;
+            let newTop = event.clientY - offsetY;
+
+            // Restrict movement within the viewport
+            newLeft = Math.max(newLeft, 0);
+            newLeft = Math.min(newLeft, window.innerWidth - microphoneButton.offsetWidth);
+
+            newTop = Math.max(newTop, 0);
+            newTop = Math.min(newTop, window.innerHeight - microphoneButton.offsetHeight);
+
+            microphoneButton.style.left = newLeft + 'px';
+            microphoneButton.style.top = newTop + 'px';
+        }
+        });
+
+        microphoneButton.addEventListener('mouseup', () => {
+        isDragging = false;
+
+        // Place the button without triggering click event
+        placeButton();
+        });
+
+        function placeButton() {
+        // Implement your desired placement logic here
+        console.log('Button placed');
+        }
+        // MIC BUTTON MOVABLE CODE ENDS HERE
+
+    
+    // // CODE FOR SPEECH RECOG AND TASK EXECUTION
+
+
+    // // Check if browser supports SpeechRecognition API
+    // if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+    // const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+    // // Set up event handlers for recognition events
+    // recognition.continuous = true;
+    // recognition.onresult = (event) => {
+    //     const transcript = event.results[0][0].transcript;
+    //     console.log('Transcript:', transcript);
+
+    //     // Check if the transcript contains the ID of the target button
+    //     if (transcript.includes('one') ) {
+    //     const targetButton = document.getElementById('one');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('two') ) {
+    //     const targetButton = document.getElementById('two');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('three') ) {
+    //     const targetButton = document.getElementById('one');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('four') ) {
+    //     const targetButton = document.getElementById('four');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('five') ) {
+    //     const targetButton = document.getElementById('five');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('six') ) {
+    //     const targetButton = document.getElementById('six');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('seven') ) {
+    //     const targetButton = document.getElementById('seven');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('eight') ) {
+    //     const targetButton = document.getElementById('eight');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('nine') ) {
+    //     const targetButton = document.getElementById('nine');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('zero') ) {
+    //     const targetButton = document.getElementById('zero');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('back') ) {
+    //     const targetButton = document.getElementById('back');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+    //     if (transcript.includes('done') ) {
+    //     const targetButton = document.getElementById('done');
+    //     targetButton.click(); // Trigger the target button's click event
+    //     //console.log('Target button clicked');
+    //     }
+        
+    // };
+
+    // // Start speech recognition when the button is clicked
+    // document.getElementById('microphone-button').addEventListener('click', () => {
+    //     // if(!isDragging){
+    //     //     recognition.start();
+    //     // }
+    //     recognition.start();
+    // });
+    // } else {
+    // alert('Speech recognition is not supported in this browser.');
+    // }
+
+</script>
+
+
+
+</body>
+</html>

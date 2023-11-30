@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow-x: hidden; /* Disable horizontal scrolling */
+        }
+
+        body {
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            position: relative; /* Add this to make positioning easier */
+        }
+
+        .phone-screen {
+            width: 100%; /* Responsive width */
+            max-width: 414px; /* Max phone screen width */
+            height: 100vh;
+            background-color: #1f1f1f;
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds the screen */
+            z-index: 0;
+            position: relative; /* Add this for proper positioning */
+        }
+
+        .floating-button {
+            position: absolute;
+            z-index: 10;
+            /*right: 30%;*/
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .microphone-icon {
+            height: 30px;
+            width: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #confirmButton {
+            background-color: #28A745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="phone-screen">
+
+        <div>
+            <button id="microphone-button" class="floating-button">
+                <img class="microphone-icon" src="static\mic.png" alt="Your Image" />
+            </button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: center; margin-top: 30%;">
+            <p style="font-size: 60px; color: #ffffff;">₹</p>
+            <input id="pay" type="text" placeholder="Pay" style="font-size: 60px; max-width: 35%; background-color: none; border: none; background: none; color: #ffffff;">
+        </div>
+
+        <p id="payToName" style="font-size: 20px; color: #ffffff; margin-left: 30%; margin-top: 0px; padding-top: 0px; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; ">to</p>
+        
+        <button id="confirmButton" onclick="intermediatePage()">Confirm</button>
+
+        
+                
+        
+
+
+    </div>
+    
+    <script>
+        // Check if browser supports SpeechRecognition API
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+        // Set up event handlers for recognition events
+        recognition.continuous = false;
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            console.log('Transcript:', transcript);
+
+            // Extract numbers from the transcript
+            const numbers = transcript.match(/\d+/g); // Use a regular expression to extract all occurrences of digits
+
+            // Update the input field with the extracted numbers
+            if (numbers) {
+            const inputField = document.getElementById('pay');
+            inputField.value = numbers.join(''); // Join the extracted numbers into a single string
+            }
+        };
+
+        // Start speech recognition when the button is clicked
+        document.getElementById('microphone-button').addEventListener('click', () => {
+            recognition.start();
+        });
+        } else {
+        alert('Speech recognition is not supported in this browser.');
+        }
+
+        // MIC BUTTON MOVABLE CODE STARTS HERE
+
+
+        const microphoneButton = document.getElementById('microphone-button');
+
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+
+        microphoneButton.addEventListener('mousedown', (event) => {
+        event.preventDefault(); // Prevent default click event
+        isDragging = true;
+
+        offsetX = event.clientX - microphoneButton.offsetLeft;
+        offsetY = event.clientY - microphoneButton.offsetTop;
+        });
+
+        document.addEventListener('mousemove', (event) => {
+        if (isDragging) {
+            let newLeft = event.clientX - offsetX;
+            let newTop = event.clientY - offsetY;
+
+            // Restrict movement within the viewport
+            newLeft = Math.max(newLeft, 0);
+            newLeft = Math.min(newLeft, window.innerWidth - microphoneButton.offsetWidth);
+
+            newTop = Math.max(newTop, 0);
+            newTop = Math.min(newTop, window.innerHeight - microphoneButton.offsetHeight);
+
+            microphoneButton.style.left = newLeft + 'px';
+            microphoneButton.style.top = newTop + 'px';
+        }
+        });
+
+        microphoneButton.addEventListener('mouseup', () => {
+        isDragging = false;
+
+        // Place the button without triggering click event
+        placeButton();
+        });
+
+        function placeButton() {
+        // Implement your desired placement logic here
+        console.log('Button placed');
+        }
+        // MIC BUTTON MOVABLE CODE ENDS HERE
+
+        // TO KNOW THE USER WHO IS USING THE APPLICATION
+
+        // Create a URLSearchParams object
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Extract the authenticated_user value
+        const AuthenticatedUser = urlParams.get('authenticated_user').toLowerCase();
+        var final_payee = '';
+
+        // Function to navigate to the second page
+        function intermediatePage() {
+            const inputField = document.getElementById('pay');
+            if (inputField.value.trim() !== "") {
+                // Send the payee name to the server
+                fetch('/payeeinfoput', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ authenticatedUser: AuthenticatedUser, payee: final_payee, amount: inputField.value.trim() }), 
+                });
+                window.open('/success?authenticated_user=' + AuthenticatedUser, '_blank');
+            }
+        }
+
+        // Set up event listener on the input field to enable/disable the button
+        document.getElementById('pay').addEventListener('input', function () {
+            const navigateButton = document.getElementById('navigateButton');
+            navigateButton.disabled = this.value.trim() === "";
+        });
+
+        // TO KNOW WHO THE USER IS PAYING TO
+
+        fetch('/payeeinfoget', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ authenticatedUser: AuthenticatedUser}),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    final_payee = data.payee;
+                    //console.log(final_payee);
+                    amount = data.amount;
+                    if (final_payee != null) {
+                        const userNameElement = document.getElementById('payToName');
+                        userNameElement.innerText = `to ${final_payee}`;
+                        console.log(userNameElement.innerText);
+                        if (amount) {
+                            const inputField = document.getElementById('pay');
+                            inputField.value = numbers.join('');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching user name:', error));
+
+    </script>
+</body>
+</html>

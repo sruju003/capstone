@@ -24,6 +24,7 @@ except Exception as e:
 
 # Create or get a database
 db = client['button_clicks_db']
+txndb = client['txn_db']
 
 # Create or get a collection
 #button_clicks = db['button_clicks'] #choose a specific collection based on the user.
@@ -126,6 +127,81 @@ def get_data_recent():
         return jsonify({'message': 'Invalid request method'}), 400
 
 
+@app.route('/payeeinfoget', methods=['POST'])
+def get_payeeinfo():
+    if request.method == 'POST':
+        data = request.get_json()
+        user_name = data.get('authenticatedUser')
+        transactions = txndb['intermediate_transactions']
+
+        # Find the txn
+        user = transactions.find_one({'user': user_name})
+
+        if user:
+            payee_name=user.get('payee')
+            amount = user.get('amount')
+            return jsonify({
+                'authenticatedUser': user_name,
+                'payee': payee_name,
+                'amount': amount,
+                'message': 'Found Payee'
+            })
+        else:
+            return jsonify({
+                'authenticatedUser': user_name,
+                'message': 'No payee found'
+            })
+
+    else:
+        return jsonify({'message': 'Invalid request method'}), 400
+    
+@app.route('/payeeinfoput', methods=['POST'])
+def put_payeeinfo():
+    if request.method == 'POST':
+        data = request.get_json()
+        user_name = data.get('authenticatedUser')
+        payee_name = data.get('payee')
+        amount = data.get('amount')
+        transactions = txndb['intermediate_transactions']
+   
+        user = transactions.find_one({'user': user_name, 'payee': payee_name})
+        if user:  # Update the amount for the existing txn
+            transactions.update_one(
+                {'user': user_name, 'payee': payee_name},
+                {'$set': {'amount': amount}},
+                upsert=True
+            )
+        else:  # Create a new txn if it doesn't exist
+            transactions.update_one(
+                {'user': user_name, 'payee': payee_name},
+                {'$set': {'amount': amount}},
+                upsert=True
+            )
+
+        return jsonify({'message': 'Click count updated successfully'})
+
+    else:
+        return jsonify({'message': 'Invalid request method'}), 400
+    
+@app.route('/paymentdone', methods=['POST'])
+def put_payment():
+    if request.method == 'POST':
+        data = request.get_json()
+        user_name = data.get('authenticatedUser')
+        payee_name = data.get('payee')
+        amount = data.get('amount')
+        int_transactions = txndb['intermediate_transactions']
+        fin_transactions = txndb['final_transactions']
+
+        # Remove the txn from intermediate txn and put it in final txn
+        int_transactions.delete_one({'user': user_name, 'payee': payee_name})
+        fin_transactions.insert_one({'$set': {'user': user_name, 'payee': payee_name, 'amount': amount}})
+
+        return jsonify({'message': 'Click count updated successfully'})
+
+    else:
+        return jsonify({'message': 'Invalid request method'}), 400
+
 @app.route('/get_count/<user_name>/<button_id>', methods=['GET'])
 def get_count(user_name, button_id):
     # Dynamically access the user-specific collection
@@ -224,6 +300,24 @@ def home():
 def index():
     authenticated_user = request.args.get('authenticated_user')
     return render_template('gpayappland.html', authenticated_user=authenticated_user)
+
+@app.route('/gpayamt')
+def gpayamt():
+    authenticated_user = request.args.get('authenticated_user')
+    return render_template('gpayamt.html', authenticated_user=authenticated_user)
+
+@app.route('/gpaycontact')
+def gpaycontact():
+    authenticated_user = request.args.get('authenticated_user')
+    return render_template('gpaycontact.html', authenticated_user=authenticated_user)
+
+@app.route('/success')
+def success_page():
+    return render_template('donepay.html')
+
+@app.route('/gpaynumber')
+def gpaynumber():
+    return render_template('gpayenter.html')
 
 @app.route('/authenticate_realtime', methods=['POST'])
 def authenticate_realtime():
