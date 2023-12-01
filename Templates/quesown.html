@@ -329,7 +329,7 @@ ul, ol {
 
     <br><hr style="width: 100%;">
 
-    <button type="submit" style="width: 50%; font-size:40px; margin-top: 30px; border-radius: 20px; border: none;">Submit</button>
+    <button type="submit" style="width: 50%; font-size:40px; margin-top: 30px; border-radius: 20px; border: none; cursor: pointer;">Submit</button>
 
 
 
@@ -353,16 +353,129 @@ ul, ol {
 
 
 <script>
+    // document.getElementById('surveyForm').addEventListener('submit', function(event) {
+    //     event.preventDefault(); // Prevent the default form submission
+
+    //     // Get form data
+    //     const formData = new FormData(this);
+    //     console.log(formData);
+
+    //     // TO KNOW THE USER WHO IS USING THE APPLICATION
+    //     // Create a URLSearchParams object
+    //     const urlParams = new URLSearchParams(window.location.search);
+
+    //     // Extract the authenticated_user value
+    //     const UserEmail = urlParams.get('email').toLowerCase();
+
+    //     // Send form data to the Flask backend
+    //     fetch('/submit_survery', {
+    //         method: 'POST',
+    //         headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //         body: JSON.stringify({ email: UserEmail, form: formData }),
+    //     })
+    //     .then(response => {
+    //         if (response.ok) {
+    //             return response.json(); // Process response as JSON if needed
+    //         }
+    //         throw new Error('Network response was not ok.');
+    //     })
+    //     .then(data => {
+    //         console.log('Form data sent:', data); // Log success message or handle the response
+    //         // Redirect or perform actions based on the response
+    //     })
+    //     .catch(error => {
+    //         console.error('There was an error:', error); // Log and handle errors
+    //     });
+    // });
+
+    // document.getElementById('surveyForm').addEventListener('submit', function(event) {
+    //     event.preventDefault(); // Prevent the default form submission
+
+    //     // Get form data
+    //     const formData = {
+    //         htmlQuestion: getRadioValue('htmlQuestion'),
+    //         htmlQuestion1: getRadioValue('htmlQuestion1'),
+    //         htmlQuestion2: getRadioValue('htmlQuestion2'),
+    //         htmlQuestion3: getRadioValue('htmlQuestion3'),
+    //         htmlQuestion4: getRadioValue('htmlQuestion4'),
+    //         htmlQuestion5: getRadioValue('htmlQuestion5'),
+    //         htmlQuestion6: getRadioValue('htmlQuestion6'),
+    //         htmlQuestion7: getRadioValue('htmlQuestion7'),
+    //         htmlQuestion8: getRadioValue('htmlQuestion8'),
+    //     };
+
+    //     console.log(formData);
+
+    //     // TO KNOW THE USER WHO IS USING THE APPLICATION
+    //     // Create a URLSearchParams object
+    //     const urlParams = new URLSearchParams(window.location.search);
+
+    //     // Extract the authenticated_user value
+    //     const UserEmail = urlParams.get('email').toLowerCase();
+
+    //     // Send form data to the Flask backend
+    //     fetch('/submit_survery', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({ email: UserEmail, form: formData }),
+    //     })
+    //     .then(response => {
+    //         if (response.ok) {
+    //             return response.json(); // Process response as JSON if needed
+    //         }
+    //         throw new Error('Network response was not ok.');
+    //     })
+    //     .then(data => {
+    //         console.log('Form data sent:', data); // Log success message or handle the response
+    //         // Redirect or perform actions based on the response
+    //     })
+    //     .catch(error => {
+    //         console.error('There was an error:', error); // Log and handle errors
+    //     });
+    // });
+
+    // // Function to get the value of the selected radio button in a radio group
+    // function getRadioValue(name) {
+    //     const selectedOption = document.querySelector(`input[name="${name}"]:checked`);
+    //     return selectedOption ? selectedOption.value : null;
+    // }
+
     document.getElementById('surveyForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
 
         // Get form data
-        const formData = new FormData(this);
+        const formData = {
+            htmlQuestion: getLabelText('htmlQuestion'),
+            htmlQuestion1: getLabelText('htmlQuestion1'),
+            htmlQuestion2: getLabelText('htmlQuestion2'),
+            htmlQuestion3: getLabelText('htmlQuestion3'),
+            htmlQuestion4: getLabelText('htmlQuestion4'),
+            htmlQuestion5: getLabelText('htmlQuestion5'),
+            htmlQuestion6: getLabelText('htmlQuestion6'),
+            htmlQuestion7: getLabelText('htmlQuestion7'),
+            htmlQuestion8: getLabelText('htmlQuestion8'),
+        };
+
+        console.log(formData);
+
+        // TO KNOW THE USER WHO IS USING THE APPLICATION
+        // Create a URLSearchParams object
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Extract the authenticated_user value
+        const UserEmail = urlParams.get('email').toLowerCase();
 
         // Send form data to the Flask backend
-        fetch('/submit_survey', {
+        fetch('/submit_survery', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: UserEmail, form: formData }),
         })
         .then(response => {
             if (response.ok) {
@@ -372,12 +485,24 @@ ul, ol {
         })
         .then(data => {
             console.log('Form data sent:', data); // Log success message or handle the response
-            // Redirect or perform actions based on the response
+
+            // Check if there's a redirection URL in the response
+            if (data.redirect) {
+                window.location.href = data.redirect; // Redirect to the specified URL
+            } else {
+                // Handle other responses or actions based on your requirements
+            }
         })
         .catch(error => {
             console.error('There was an error:', error); // Log and handle errors
         });
     });
+
+    // Function to get the text content of the selected label for a radio group
+    function getLabelText(name) {
+        const selectedLabel = document.querySelector(`input[name="${name}"]:checked + label`);
+        return selectedLabel ? selectedLabel.textContent.trim() : null;
+    }
 </script>
 
 

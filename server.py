@@ -118,28 +118,28 @@ def create_profile():
         print(e)
         return jsonify({'message': 'Internal Server Error'}), 500
 
-@app.route('/createprofile/<email>', methods=['POST'])
-def create_profile_more(email):
+@app.route('/submit_survery', methods=['POST'])
+def create_profile_more():
     try:
+        data = request.get_json()
         # Assuming form data is received
-        form_data = request.form
+        form_data = data['form']
+        email = data['email']
+        print(email)
+        print(form_data)
 
         # Check if the email already exists in the profile_data collection
         existing_user = profile_data_collection.find_one({'email': email})
 
         if existing_user:
-            # If the user exists, update the existing document with the new form data
-            updated_data = {
-                'responses': form_data.to_dict(flat=False)
-            }
-
             # Update the existing user document
             profile_data_collection.update_one(
                 {'email': email},
-                {'$set': updated_data}
+                {'$set': form_data}
             )
             
-            return jsonify({'message': 'Profile updated successfully'}), 200
+            return jsonify({'redirect': '/index?authenticated_user=' + existing_user['user_name']})
+
         else:
             # If the user doesn't exist, you may want to handle this case based on your requirements
             return jsonify({'message': 'User not found'}), 404
@@ -335,12 +335,12 @@ def recognize_realtime_face(image_data):
 def default_landing_page():
     return render_template('buttons.html')
 
-@app.route('/psych/<email>')
+@app.route('/psych')
 def psych():
     return render_template('quesown.html')
 
-@app.route('/psych')
-def psychometric():
+@app.route('/register')
+def register():
     return render_template('questions.html')
 
 @app.route('/camera')
@@ -359,6 +359,11 @@ def home():
 
 @app.route('/index')
 def index():
+    authenticated_user = request.args.get('authenticated_user')
+    return render_template('gpayappland.html', authenticated_user=authenticated_user)
+
+@app.route('/indexed')
+def indexed():
     authenticated_user = request.args.get('authenticated_user')
     return render_template('gpayappland.html', authenticated_user=authenticated_user)
 
