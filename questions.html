@@ -145,6 +145,7 @@
   {question:"What's your first name?"},
   {question:"What's your last name?"},
   {question:"What's your email?", pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/},
+  { question: "What's your date of birth?", type: "date" },
   {question:"Create your password", type: "password"}  
 ]
 
@@ -182,13 +183,32 @@
   
   // when all the questions have been answered
   function done() {
+
+    // Calculate age from the date of birth
+    var dob = new Date(questions[3].value);
+    var today = new Date();
+    var user_age = today.getFullYear() - dob.getFullYear();
+    var monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      user_age--;
+    }
+
+    // send the values to the server to create profiles
+    fetch('/createprofile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_name: questions[0].value, last_name: questions[1].value, email: questions[2].value, 
+          age: user_age, password: questions[4].value, }), 
+    });
     
     // remove the box if there is no next question
     register.className = 'close'
     
     // add the h1 at the end with the welcome text
     var h1 = document.createElement('h1')
-    h1.appendChild(document.createTextNode('Welcome ' + questions[0].value + '!'))
+    h1.appendChild(document.createTextNode('Welcome ' + user_age + '!'))
     setTimeout(function() {
       register.parentElement.appendChild(h1)     
       setTimeout(function() {h1.style.opacity = 1}, 50)
@@ -256,20 +276,6 @@
 }())
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
     </body>
-
-
-
 
 </html>
