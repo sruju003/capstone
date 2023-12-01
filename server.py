@@ -24,11 +24,13 @@ except Exception as e:
 
 # Create or get a database
 db = client['button_clicks_db']
+
 txndb = client['txn_db']
+
+profile_data_collection = db['profile_data']
 
 # Create or get a collection
 #button_clicks = db['button_clicks'] #choose a specific collection based on the user.
-
 
 @app.route('/update_count', methods=['POST'])
 def update_count():
@@ -69,7 +71,6 @@ def update_count():
     else:
         return jsonify({'message': 'Invalid data'}), 400
 
-
 @app.route('/datamax', methods=['POST'])
 def get_data_max():
     if request.method == 'POST':
@@ -97,6 +98,55 @@ def get_data_max():
 
     else:
         return jsonify({'message': 'Invalid request method'}), 400
+
+@app.route('/createprofile', methods=['POST'])
+def create_profile():
+    try:
+        data = request.get_json()
+        # Insert the new user data into the profile_data collection
+        profile_data_collection.insert_one({
+            'user_name': data['user_name'],
+            'last_name': data['last_name'],
+            'email': data['email'],
+            'age': data['age'],
+            'password': data['password'],
+        })
+
+        return jsonify({'message': 'Profile created successfully'}), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Internal Server Error'}), 500
+
+@app.route('/createprofile/<email>', methods=['POST'])
+def create_profile_more(email):
+    try:
+        # Assuming form data is received
+        form_data = request.form
+
+        # Check if the email already exists in the profile_data collection
+        existing_user = profile_data_collection.find_one({'email': email})
+
+        if existing_user:
+            # If the user exists, update the existing document with the new form data
+            updated_data = {
+                'responses': form_data.to_dict(flat=False)
+            }
+
+            # Update the existing user document
+            profile_data_collection.update_one(
+                {'email': email},
+                {'$set': updated_data}
+            )
+            
+            return jsonify({'message': 'Profile updated successfully'}), 200
+        else:
+            # If the user doesn't exist, you may want to handle this case based on your requirements
+            return jsonify({'message': 'User not found'}), 404
+
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Internal Server Error'}), 500
     
 @app.route('/datarecent', methods=['POST'])
 def get_data_recent():
@@ -125,7 +175,6 @@ def get_data_recent():
 
     else:
         return jsonify({'message': 'Invalid request method'}), 400
-
 
 @app.route('/payeeinfoget', methods=['POST'])
 def get_payeeinfo():
@@ -217,7 +266,6 @@ def get_count(user_name, button_id):
 
     return jsonify({'user_name': user_name, 'button_id': button_id, 'click_count': count})
 
-
 @app.route('/get_all_counts', methods=['GET'])
 def get_all_counts():
     all_button_counts = {}
@@ -239,7 +287,6 @@ def get_all_counts():
         all_button_counts[user_name] = user_counts
 
     return jsonify(all_button_counts)
-
 
 def load_face_encodings(file_path):
     with open(file_path, 'rb') as file:
@@ -281,8 +328,22 @@ def recognize_realtime_face(image_data):
     except Exception as e:
         print(e)
         return None
-    
+
+#routes defined
+
 @app.route('/')
+def default_landing_page():
+    return render_template('buttons.html')
+
+@app.route('/psych/<email>')
+def psych():
+    return render_template('quesown.html')
+
+@app.route('/psych')
+def psychometric():
+    return render_template('questions.html')
+
+@app.route('/camera')
 def authenticate_camera():
     return render_template('camera.html')
 
