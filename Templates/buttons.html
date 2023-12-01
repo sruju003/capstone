@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <title>
+      Homepage
+    </title>
+  </head>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css?family=Raleway:400,400i,700");
+    @import url("https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap");
+
+    body {
+	background: linear-gradient(-45deg, #210239, rgb(0, 0, 0), #15002d, #580729);
+	background-size: 1900% 1900%;
+    background-repeat: no-repeat;
+	animation: gradient 15s ease infinite;
+	height: 100vh;
+    font-family: Raleway, sans-serif;
+    scroll-behavior:none;
+    overflow: hidden;
+    }
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+
+hr {
+ width: 50%;
+}
+
+.credits {
+  color: #BDBDBD;
+  opacity:40%;
+  text-align: right;
+  font-size: 40px;
+}
+
+.button-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 80vh; /* 80% of the viewport height */
+      margin-top: 4%;
+    }
+
+    .custom-button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      background:none;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      border-style: solid;
+      height: 40%;
+      width: 80%;
+      font-size: 60px;
+    }
+
+
+
+  </style>
+
+
+
+  <body>
+
+    <div class="button-container">
+        <button class="custom-button">Are you a New User?</button>
+        <button class="custom-button">Are you an Existing User?</button>
+      </div>
+    
+
+
+
+
+  </body>
+</html>
