@@ -162,8 +162,8 @@
         }
     }
 
-            // Check if browser supports SpeechRecognition API
-            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        // Check if browser supports SpeechRecognition API
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 
         // Set up event handlers for recognition events
@@ -179,6 +179,7 @@
             if (numbers) {
             const inputField = document.getElementById('inputnumber');
             inputField.value = numbers.join(''); // Join the extracted numbers into a single string
+            enteredNumbers = inputField.value;
             }
         };
 
@@ -237,94 +238,6 @@
         }
         // MIC BUTTON MOVABLE CODE ENDS HERE
 
-    
-    // // CODE FOR SPEECH RECOG AND TASK EXECUTION
-
-
-    // // Check if browser supports SpeechRecognition API
-    // if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-    // const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-
-    // // Set up event handlers for recognition events
-    // recognition.continuous = true;
-    // recognition.onresult = (event) => {
-    //     const transcript = event.results[0][0].transcript;
-    //     console.log('Transcript:', transcript);
-
-    //     // Check if the transcript contains the ID of the target button
-    //     if (transcript.includes('one') ) {
-    //     const targetButton = document.getElementById('one');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('two') ) {
-    //     const targetButton = document.getElementById('two');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('three') ) {
-    //     const targetButton = document.getElementById('one');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('four') ) {
-    //     const targetButton = document.getElementById('four');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('five') ) {
-    //     const targetButton = document.getElementById('five');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('six') ) {
-    //     const targetButton = document.getElementById('six');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('seven') ) {
-    //     const targetButton = document.getElementById('seven');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('eight') ) {
-    //     const targetButton = document.getElementById('eight');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('nine') ) {
-    //     const targetButton = document.getElementById('nine');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('zero') ) {
-    //     const targetButton = document.getElementById('zero');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('back') ) {
-    //     const targetButton = document.getElementById('back');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-    //     if (transcript.includes('done') ) {
-    //     const targetButton = document.getElementById('done');
-    //     targetButton.click(); // Trigger the target button's click event
-    //     //console.log('Target button clicked');
-    //     }
-        
-    // };
-
-    // // Start speech recognition when the button is clicked
-    // document.getElementById('microphone-button').addEventListener('click', () => {
-    //     // if(!isDragging){
-    //     //     recognition.start();
-    //     // }
-    //     recognition.start();
-    // });
-    // } else {
-    // alert('Speech recognition is not supported in this browser.');
-    // }
 
 </script>
 
