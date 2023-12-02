@@ -483,4 +483,4 @@ app.config['ENCODING_URL_PATH'] = '/pics'
 app.config['ENCODING_FOLDER'] = 'pics'
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000,debug=True)
