@@ -150,7 +150,7 @@
                 body: JSON.stringify({ authenticatedUser: AuthenticatedUser, payee: enteredNumbers, amount: 0 }), 
             });
 
-            window.open('/gpayamt?authenticated_user=' + AuthenticatedUser,'_blank')
+            window.open('/gpayamt?authenticated_user=' + AuthenticatedUser,'_self')
             } else {
                 console.log('No numbers to send.');
             }

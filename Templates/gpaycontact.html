@@ -296,7 +296,7 @@
             body: JSON.stringify({ authenticatedUser: AuthenticatedUser, payee: button.id, amount: 0 }), 
             });
 
-            window.open('/gpayamt?authenticated_user=' + AuthenticatedUser, '_blank')
+            window.open('/gpayamt?authenticated_user=' + AuthenticatedUser, '_self')
             
         });
         });

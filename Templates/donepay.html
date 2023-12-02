@@ -38,7 +38,7 @@
   top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 500px;
+  width: 400px;
   height: 70px;
   background-color:none;
   display: flex;
@@ -105,7 +105,7 @@
                     body: JSON.stringify({ authenticatedUser: AuthenticatedUser, payee: final_payee, amount: final_amount }), 
                 });
 
-          window.open('/home?authenticated_user=' + AuthenticatedUser, '_blank');
+          window.open('/home?authenticated_user=' + AuthenticatedUser, '_self');
         }, 5000);
 
         fetch('/payeeinfoget', {

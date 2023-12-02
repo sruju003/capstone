@@ -182,7 +182,7 @@
                     },
                     body: JSON.stringify({ authenticatedUser: AuthenticatedUser, payee: final_payee, amount: inputField.value.trim() }), 
                 });
-                window.open('/success?authenticated_user=' + AuthenticatedUser, '_blank');
+                window.open('/success?authenticated_user=' + AuthenticatedUser, '_self');
             }
         }
 

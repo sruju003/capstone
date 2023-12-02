@@ -98,6 +98,37 @@ def get_data_max():
 
     else:
         return jsonify({'message': 'Invalid request method'}), 400
+    
+@app.route('/userinput', methods=['POST'])
+def get_user_pref():
+    if request.method == 'POST':
+        data = request.get_json()
+        user_name = data.get('authenticatedUser')
+
+        # Find the user
+        user_data = profile_data_collection.find_one({'user_name': user_name})
+
+        if user_data:
+            color=user_data.get('htmlQuestion1').split(' ')
+            bg_color = color[0]
+            button_color = color[2]
+            button_size = user_data.get('htmlQuestion2')
+            #button_size = 'Small'
+            return jsonify({
+                'authenticatedUser': user_name,
+                'bg_color': bg_color,
+                'button_color': button_color,
+                'button_size': button_size,
+                'message': 'User Preference Found'
+            })
+        else:
+            return jsonify({
+                'authenticatedUser': user_name,
+                'message': 'No User found'
+            })
+
+    else:
+        return jsonify({'message': 'Invalid request method'}), 400
 
 @app.route('/createprofile', methods=['POST'])
 def create_profile():
@@ -359,11 +390,6 @@ def home():
 
 @app.route('/index')
 def index():
-    authenticated_user = request.args.get('authenticated_user')
-    return render_template('gpayappland.html', authenticated_user=authenticated_user)
-
-@app.route('/indexed')
-def indexed():
     authenticated_user = request.args.get('authenticated_user')
     return render_template('gpayappland.html', authenticated_user=authenticated_user)
 
